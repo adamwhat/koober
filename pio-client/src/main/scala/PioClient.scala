@@ -35,7 +35,9 @@ object PioClient extends App {
 
   val wsClient = AhcWSClient()
 
-  val sink = Sink.foreachParallel[JsValue](50) { kafkaJson =>
+  val r = scala.util.Random
+
+  val sink = Sink.foreachParallel[JsValue](1) { kafkaJson =>
 
     val status = (kafkaJson \ "status").as[String]
     val dateTime = (kafkaJson \ "datetime").as[DateTime]
@@ -50,6 +52,7 @@ object PioClient extends App {
     )
 
     println("Sending to PIO: " + pioJson)
+    Thread.sleep(r.nextInt(100))
 
     wsClient.url(pioUrl).withQueryString("accessKey" -> accessKey).post(pioJson).flatMap { response =>
       response.status match {
