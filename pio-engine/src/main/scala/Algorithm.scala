@@ -7,11 +7,12 @@ import org.apache.spark.mllib.clustering.KMeansModel
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.regression.{LinearRegressionModel, LinearRegressionWithSGD}
 import org.joda.time.DateTime
+import org.deeplearning4j.datasets.iterator.impl.ListDataSetIterator
 
 case class AlgorithmParams(
   iterations:        Int    = 20,
   regParam:          Double = 0.1,
-  miniBatchFraction: Double = 1.0, 
+  miniBatchFraction: Double = 1.0,
   stepSize:          Double = 0.001
 ) extends Params
 
