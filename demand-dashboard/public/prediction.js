@@ -52,7 +52,9 @@ $(function() {
     center: mapCenter
   });
 
-    predictionMap.addControl(new mapboxgl.NavigationControl({position: 'top-left'}));
+
+  predictionMap.addControl(new mapboxgl.NavigationControl({position: 'top-left'}));
+
 
   predictionMap.on('click', function(data) {
     var lat = data.lngLat.lat;
@@ -105,21 +107,5 @@ $(function() {
       .setHTML('<h2>Demand: 0</h2>')
       .addTo(predictionMap);
 
-//     var features = predictionMap.queryRenderedFeatures(e.point, { layers: ['prediction'] });
-//     if (!features.length) {
-//            return;
-//        }
-//
-//     var feature = features[0];
-//     var popup = new mapboxgl.Popup()
-//             .setLngLat(feature.geometry.coordinates)
-//             .setHTML('<h2>Demand: '+ feature.properties['demand']+'</h2>')
-//             .addTo(map);
   });
-
-
-//     predictionMap.on('mousemove', function(e) {
-//         var features = predictionMap.queryRenderedFeatures(e.point, { layers: ['prediction'] });
-//         predictionMap.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
-//     });
 });
