@@ -4,16 +4,40 @@ import grizzled.slf4j.Logger
 import org.apache.predictionio.controller.{CustomQuerySerializer, P2LAlgorithm, Params}
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.clustering.KMeansModel
+import org.apache.spark.mllib.feature.StandardScalerModel
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.regression.{LinearRegressionModel, LinearRegressionWithSGD}
 import org.joda.time.DateTime
-import org.deeplearning4j.datasets.iterator.impl.ListDataSetIterator
+
+import org.deeplearning4j.datasets.iterator.DataSetIterator;
+import org.deeplearning4j.datasets.iterator.impl.IrisDataSetIterator;
+import org.deeplearning4j.eval.Evaluation;
+import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
+import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
+//import org.deeplearning4j.nn.conf.layers.Layer
+import org.deeplearning4j.nn.conf.layers.DenseLayer;
+import org.deeplearning4j.nn.conf.layers.OutputLayer;
+import org.deeplearning4j.nn.conf.Updater;
+import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.deeplearning4j.nn.params.DefaultParamInitializer;
+import org.deeplearning4j.nn.weights.WeightInit;
+import org.deeplearning4j.nn.api.OptimizationAlgorithm;
+import org.deeplearning4j.optimize.api.IterationListener;
+import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
+import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.dataset.DataSet;
+import org.nd4j.linalg.factory.Nd4j;
+import org.nd4j.linalg.activations.Activation;
+import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction;
 
 case class AlgorithmParams(
-  iterations:        Int    = 20,
-  regParam:          Double = 0.1,
-  miniBatchFraction: Double = 1.0,
-  stepSize:          Double = 0.001
+  seed:               Int     = 12345,
+  iterations:         Int     = 20,
+  learningRate:       Double  = 0.1,
+  layers:             Int     = 2,
+  numInputs:          Int     = 5,
+  numOutputs:         Int     = 1,
+  listenerFreq:       Int     = 2
 ) extends Params
 
 class Algorithm(val ap: AlgorithmParams)
@@ -22,18 +46,37 @@ class Algorithm(val ap: AlgorithmParams)
   @transient lazy val logger = Logger[this.type]
 
   def train(sc: SparkContext, preparedData: PreparedData): Model = {
-    val lin = new LinearRegressionWithSGD()
-    lin.setIntercept(true)
-    lin.setValidateData(true)
-    preparedData.data.collect().foreach(println)
-    lin.optimizer
-      .setNumIterations(50)
-      .setMiniBatchFraction(1.0)
-      .setStepSize(0.002)
-    val linearRegressionModel = lin.run(preparedData.data, Vectors.dense(0.2, 0.2, 0.5, 0.005, 0.1))
-//    print(linearRegressionModel.intercept)
-//    print(linearRegressionModel.weights)
-    new Model(linearRegressionModel, Preparator.locationClusterModel.get)
+    Nd4j.MAX_SLICES_TO_PRINT = 10;
+    Nd4j.MAX_ELEMENTS_PER_SLICE = 10;
+
+    val conf : MultiLayerConfiguration 
+      = new NeuralNetConfiguration.Builder()
+        .seed(ap.seed)
+        .iterations(ap.iterations)
+        .learningRate(ap.learningRate)
+        .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
+        .weightInit(WeightInit.XAVIER)
+        .updater(Updater.NESTEROVS).momentum(0.9)
+        .list()
+        .layer(0, new DenseLayer.Builder().nIn(ap.numInputs).nOut(3)
+          .activation(Activation.TANH)
+          .build())
+        .layer(1, new OutputLayer.Builder(LossFunction.RMSE_XENT)
+          .activation(Activation.IDENTITY)
+          .nIn(3).nOut(1).build())
+        .backprop(true).pretrain(false)
+        .build()
+    
+    val model : MultiLayerNetwork = new MultiLayerNetwork(conf)
+    model.init()
+    model.setListeners(new ScoreIterationListener(ap.listenerFreq))
+
+    // preparedData.data.foreach(batch => {
+    //   model.fit(batch)
+    // })
+    model.fit(preparedData.dataSet)
+
+    new Model(model, Preparator.locationClusterModel.get, Preparator.standardScalerModel.get)
   }
 
   def predict(model: Model, query: Query): PredictedResult = {
@@ -42,14 +85,15 @@ class Algorithm(val ap: AlgorithmParams)
   }
 }
 
-class Model(mod: LinearRegressionModel, locationClusterModel: KMeansModel) extends Serializable { // will not be DateTime after changes
-                                                                                  // to Preparator
+class Model(mod: MultiLayerNetwork, locationClusterModel: KMeansModel, standardScalerModel: StandardScalerModel) extends Serializable { 
   @transient lazy val logger = Logger[this.type]
 
-  def predict(query: Query): Double = {
+  def predict(query: Query) : Double = {
+    val normalizedTimeFeatureVector = standardScalerModel.transform(Preparator.toFeaturesVector(DateTime.parse(query.eventTime), query.lat, query.lng))
     val locationClusterLabel = locationClusterModel.predict(Vectors.dense(query.lat, query.lng))
-    val features = Preparator.toFeaturesVector(DateTime.parse(query.eventTime), query.lat, query.lng, locationClusterLabel)
-    mod.predict(features)
+    val features = Preparator.toFeaturesVector(normalizedTimeFeatureVector, locationClusterLabel)
+    
+    mod.predict(Nd4j.create(features.toArray))(0).toDouble
   }
 }
 
