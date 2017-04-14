@@ -68,12 +68,17 @@ class Preparator extends PPreparator[TrainingData, PreparedData] {
 
     } cache ()
 
+    var dataArray : Array[Array[Double]] = data.collect().toArray.slice(0,5000)
+    println(dataArray.size)
 
-    var transposedArray = data.toArray().transpose
-    var features = transposedArray.slice(1, transposedArray(0).length-1).transpose
-    var labels = transposedArray(0)
+    var labels = dataArray.transpose.head
+    var features = dataArray.transpose.tail.transpose
+
+    println("features size = " + features.size)
+    println("labels size = " + labels.size)
+
     var dataset = new DataSet(Nd4j.create(features), Nd4j.create(labels))
-    //new PreparedData(new RDD[dataset])
+
     new PreparedData(dataset, labels)
     
   }

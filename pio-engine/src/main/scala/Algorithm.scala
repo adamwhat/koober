@@ -9,8 +9,8 @@ import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.regression.{LinearRegressionModel, LinearRegressionWithSGD}
 import org.joda.time.DateTime
 
-import org.deeplearning4j.datasets.iterator.DataSetIterator;
-import org.deeplearning4j.datasets.iterator.impl.IrisDataSetIterator;
+//import org.deeplearning4j.datasets.iterator.DataSetIterator;
+//import org.deeplearning4j.datasets.iterator.impl.IrisDataSetIterator;
 import org.deeplearning4j.eval.Evaluation;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
@@ -28,14 +28,14 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.activations.Activation;
-import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction;
+import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction.MSE;
 
 case class AlgorithmParams(
   seed:               Int     = 12345,
   iterations:         Int     = 20,
   learningRate:       Double  = 0.1,
   layers:             Int     = 2,
-  numInputs:          Int     = 5,
+  numInputs:          Int     = 10,
   numOutputs:         Int     = 1,
   listenerFreq:       Int     = 2
 ) extends Params
@@ -49,6 +49,7 @@ class Algorithm(val ap: AlgorithmParams)
     Nd4j.MAX_SLICES_TO_PRINT = 10;
     Nd4j.MAX_ELEMENTS_PER_SLICE = 10;
 
+
     val conf : MultiLayerConfiguration 
       = new NeuralNetConfiguration.Builder()
         .seed(ap.seed)
@@ -58,22 +59,17 @@ class Algorithm(val ap: AlgorithmParams)
         .weightInit(WeightInit.XAVIER)
         .updater(Updater.NESTEROVS).momentum(0.9)
         .list()
-        .layer(0, new DenseLayer.Builder().nIn(ap.numInputs).nOut(3)
-          .activation(Activation.TANH)
-          .build())
-        .layer(1, new OutputLayer.Builder(LossFunction.RMSE_XENT)
+        .layer(0, new DenseLayer.Builder().nIn(9).nOut(20)
+          .activation(Activation.TANH).build())
+        .layer(1, new OutputLayer.Builder(MSE)
           .activation(Activation.IDENTITY)
-          .nIn(3).nOut(1).build())
-        .backprop(true).pretrain(false)
-        .build()
+          .nIn(20).nOut(5000).build())
+        .backprop(true).pretrain(false).build()
     
     val model : MultiLayerNetwork = new MultiLayerNetwork(conf)
     model.init()
     model.setListeners(new ScoreIterationListener(ap.listenerFreq))
 
-    // preparedData.data.foreach(batch => {
-    //   model.fit(batch)
-    // })
     model.fit(preparedData.dataSet)
 
     new Model(model, Preparator.locationClusterModel.get, Preparator.standardScalerModel.get)

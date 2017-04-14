@@ -11,10 +11,13 @@
     {
       "name": "alg",
       "params": {
-        "iterations": 4096,
-        "miniBatchFraction" : 1.0,
-        "regParam" : 0.0,
-        "stepSize": 0.9
+        "seed": 12345,
+        "iterations" : 20,
+        "learningRate" : 0.1,
+        "layers": 2,
+        "numInputs": 9,
+        "numOutputs": 1,
+        "listenerFreq": 2
       }
     }
   ]
