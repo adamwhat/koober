@@ -71,6 +71,14 @@ $(function() {
       // ignored
     }
 
+//    predictionMap.addSource("demand", {
+//      type: "geojson",
+//      data: "/demand?lng=" + lng + "&lat=" + lat,
+//      cluster: true,
+//      clusterMaxZoom: 15,
+//      clusterRadius: 20
+//    });
+
     predictionMap.addSource("demand", {
       type: "geojson",
       data: "/demand?lng=" + lng + "&lat=" + lat
