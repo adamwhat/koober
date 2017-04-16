@@ -106,11 +106,5 @@ $(function() {
       .setLngLat(data.lngLat)
       .setHTML('<h2>Demand: 0</h2>')
       .addTo(predictionMap);
-
-<<<<<<< 39d9608a897de3b0b557329814a045b0d7766628
-  });
-=======
-  //});
->>>>>>> Add demand-driven circle color layer
 });
 })
