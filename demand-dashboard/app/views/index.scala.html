@@ -1,32 +1,23 @@
+@()
+
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <title>About</title>
-    <link rel="stylesheet" href="@routes.Assets.versioned("main.css")">
-    <script src="@routes.Assets.versioned("lib/jquery/jquery.min.js")"></script>
+    <head>
+        <title>Demand Dashboard</title>
+        <script src="@routes.Assets.versioned("lib/jquery/jquery.min.js")"></script>
+        <script src="@routes.Assets.versioned("index.js")"></script>
+    </head>
+    <body>
+        <form id="demandForm" action="@routes.HomeController.predict()">
+            <label for="startDateTime">Start Date Time</label>
+            <input type="datetime-local" id="startDateTime" step="1">
 
-    <script>
-        $(function(){
-            $(".header-container").load("@routes.HomeController.header()");
-        });
-    </script>
-</head>
-<body>
-    <div class="header-container"></div>
+            <label for="endDateTime">End Date Time</label>
+            <input type="datetime-local" id="endDateTime" step="1">
 
-    <div class="section-header">
-        <div class="section-logo-title">
-            <img src="../assets/AboutSectionIcon.png" alt="logo">
-            <h1>About Koober</h1>
-        </div>
-    </div>
+            <button type="submit">Get Demand</button>
+        </form>
 
-    <div id="about-body">
-        <p>Koober is an open-source project that uses <a class="linked-text" href="http://predictionio.incubator.apache.org/" target="_blank">PredictionIO</a> to predict taxi demand based on past usage and to analyze
-            trends depending on time, location, and weather across different models. The dashboard integrates <a class="linked-text" href="https://www.mapbox.com/" target="_blank">MapBox</a> for data visualization on an interactive map. Koober currently supports data analysis of certain New York
-            City locations.
-        </p>
-        <a id="github-button" href="https://github.com/jamesward/koober" target="_blank">Github</a>
-    </div>
-</body>
+        <div id="output"></div>
+    </body>
 </html>
