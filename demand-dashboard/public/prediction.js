@@ -106,5 +106,13 @@ $(function() {
       .setLngLat(data.lngLat)
       .setHTML('<h2>Demand: 0</h2>')
       .addTo(predictionMap);
+
+
+    // predictionMap.setFilter('prediction',
+    //     ['>=', 'properties.demand', '9.0'],
+    //     ['<', 'properties.demand', '10.0']
+    // )
+
+  });
+
 });
-})
