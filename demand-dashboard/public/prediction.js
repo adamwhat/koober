@@ -110,60 +110,65 @@ $(function() {
 //      "&snow=" + 0 + "&hail=" + 0 + "&thunder=" + 0 + "&tornado=" + 0
 //      //data: "/demand?lng=" + lng + "&lat=" + lat
 //    });
-    var query = buildQueryJson()
-    $.ajax({
-     url: "http://localhost:5000/queries.json",
-     type: 'POST',
-     dataType: 'json',
-     contentType: 'application/json',
-      data: query,
-     success: function (d) {
-     console.log(d)
-      predictionMap.addSource("demand", {
-        type: "geojson",
-        data: {"type": "Feature",
-             "properties": {
-                "Primary ID": 1,
-                "demand": d["demand"]
-              },
-              "geometry":{
-                "type": "Point",
-                "coordinates": [lng, lat]
-              }
-            }
-      });
-      predictionMap.addLayer({
-              "id": "prediction",
-              "type": "circle",
-              "source": "demand",
-              "paint": {
-                "circle-color": {
-                    property: 'demand',
-                    type: 'exponential',
-                    stops: [
-                          [2.0, '#fee5d9'],
-                          [4.0, '#fcae91'],
-                          [6.0, '#fb6a4a'],
-                          [8.0, '#de2d26'],
-                          [10.0, '#a50f15']
-                        ]
-                },
-                "circle-radius": {
-                    'base': 1.75,
-                    'stops': [[12, 3], [22, 180]]
-                },
-                'circle-opacity' : 0.8
-              }
-      });
-      new mapboxgl.Popup()
-        .setLngLat(data.lngLat)
-        .setHTML('<h2>Demand:' + d["demand"] + '</h2>')
-        .addTo(predictionMap);
-    },
-      error: function(){
-       alert("Cannot get data");
-     }
-    });
+    var latLngArray = makeCluster(lat, lng)
+    for (i = 0; i < latLngArray[0].length; i ++){
+        var query = buildQueryJson(lat, lng)
+        $.ajax({
+         url: "http://localhost:5000/queries.json",
+         type: 'POST',
+         dataType: 'json',
+         contentType: 'application/json',
+          data: query,
+         success: function (d) {
+         console.log(d)
+          predictionMap.addSource("demand", {
+            type: "geojson",
+            data: {"type": "Feature",
+                 "properties": {
+                    "Primary ID": 1,
+                    "demand": d["demand"]
+                  },
+                  "geometry":{
+                    "type": "Point",
+                    "coordinates": [lng, lat]
+                  }
+                }
+          });
+          predictionMap.addLayer({
+                  "id": "prediction",
+                  "type": "circle",
+                  "source": "demand",
+                  "paint": {
+                    "circle-color": {
+                        property: 'demand',
+                        type: 'exponential',
+                        stops: [
+                              [2.0, '#fee5d9'],
+                              [4.0, '#fcae91'],
+                              [6.0, '#fb6a4a'],
+                              [8.0, '#de2d26'],
+                              [10.0, '#a50f15']
+                            ]
+                    },
+                    "circle-radius": {
+                        'base': 1.75,
+                        'stops': [[12, 3], [22, 180]]
+                    },
+                    'circle-opacity' : 0.8
+                  }
+          });
+          new mapboxgl.Popup()
+            .setLngLat(data.lngLat)
+            .setHTML('<h2>Demand:' + d["demand"] + '</h2>')
+            .addTo(predictionMap);
+        },
+          error: function(){
+           alert("Cannot get data");
+         }
+        });
+
+    }
+
 
 
 
@@ -178,7 +183,7 @@ $(function() {
 
   });
 
-  function buildQueryJson(){
+  function buildQueryJson(lat: Double, lng: Double){
     result = {}
     var datetime = date + " " + time;
     var eventTime = new Date(datetime);
