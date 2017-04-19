@@ -74,7 +74,7 @@ class HomeController @Inject() (configuration: Configuration, predictionIO: Pred
               tornado: Int, heat: Double, windchill: Double, precipitation: Double) = Action.async {
 
     var query = Json.obj(
-      "eventTime" -> String,
+      "eventTime" -> eventTime,
       "lat" -> lat,
       "lng" -> lng,
       "temperature" -> temperature,
