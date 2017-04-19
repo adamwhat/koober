@@ -71,9 +71,32 @@ $(function() {
       // ignored
     }
 
+
+//    $.post("/app/controllers/HomeController.predict", {
+//                      "eventTime": "2016-01-20T21:54:07.000-05:00",
+//                      "lat": 40.7527999878,
+//                      "lng": -73.9436721802,
+//                      "temperature": 28.34,
+//                      "clear": 0,
+//                      "fog": 0,
+//                      "rain": 1,
+//                      "snow": 0,
+//                      "hail": 0,
+//                      "thunder":0,
+//                      "tornado":0,
+//                      "heat":1.25,
+//                      "windchill":20.00,
+//                      "precipitation":23.00 }, function(data, status){
+//                      console.log(data)
+//                      })
+
     predictionMap.addSource("demand", {
       type: "geojson",
-      data: "/demand?lng=" + lng + "&lat=" + lat
+      data: "/predict?eventTime=" + "2016-01-20T21:54:07.000-05:00" + "&lat=" + 40.7527999878 +
+      "&lng=" + -73.9436721802 + "&temperature=" + 28.34 + "&clear=" + 0 + "&fog=" + 0 + "&rain=" + 1 +
+      "&snow=" + 0 + "&hail=" + 0 + "&thunder=" + 0 + "&tornado=" + 0 + "&heat=" + 0 + "&windchill=" + 20.00 +
+      "&precipitation=" + 23.0
+      //data: "/demand?lng=" + lng + "&lat=" + lat
     });
 
       predictionMap.addLayer({
@@ -107,11 +130,10 @@ $(function() {
       .setHTML('<h2>Demand: 0</h2>')
       .addTo(predictionMap);
 
-
-    // predictionMap.setFilter('prediction',
-    //     ['>=', 'properties.demand', '9.0'],
-    //     ['<', 'properties.demand', '10.0']
-    // )
+//    predictionMap.setFilter('prediction',
+//        ['>=', 'properties.demand', '9.0'],
+//        ['<', 'properties.demand', '10.0']
+//    )
 
   });
 

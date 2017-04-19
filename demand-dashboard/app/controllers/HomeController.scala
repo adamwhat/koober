@@ -4,7 +4,7 @@ import javax.inject._
 
 import org.joda.time.DateTime
 import play.api.Configuration
-import play.api.libs.json.{Json, Reads, Writes}
+import play.api.libs.json.{Json, JsValue, Reads, Writes}
 import play.api.mvc.{Action, Controller}
 import services.PredictionIO
 
@@ -52,19 +52,75 @@ class HomeController @Inject() (configuration: Configuration, predictionIO: Pred
     Ok(views.html.dashboardPrediction(mapboxAccessToken))
   }
 
-  // todo: input checking and error handling
-  def predict = Action.async(parse.json) { request =>
-    val eventTime = (request.body \ "eventTime").as[DateTime]
+  //    request =>
+  //    val eventTime = (request.body \ "eventTime").as[DateTime]
+  //    val lat = (request.body \ "lat").as[Double]
+  //    val lng = (request.body \ "lng").as[Double]
+  //    val temperature = (request.body \ "temperature").as[Double]
+  //    val clear = (request.body \ "clear").as[Int]
+  //    val fog = (request.body \ "fog").as[Int]
+  //    val rain = (request.body \ "rain").as[Int]
+  //    val snow = (request.body \ "snow").as[Int]
+  //    val hail = (request.body \ "hail").as[Int]
+  //    val thunder = (request.body \ "thunder").as[Int]
+  //    val tornado = (request.body \ "tornado").as[Int]
+  //    val heat = (request.body \ "heat").as[Double]
+  //    val windchill = (request.body \ "windchill").as[Double]
+  //    val precipitation = (request.body \ "precipitation").as[Double]
 
-    predictionIO.predict(eventTime).map { json =>
-      Ok(json)
-    }
+  // todo: input checking and error handling
+  def predict(eventTime: String, lat: Double, lng: Double, temperature: Double,
+              clear: Int, fog: Int, rain: Int, snow: Int, hail: Int, thunder: Int,
+              tornado: Int, heat: Double, windchill: Double, precipitation: Double) = Action.async {
+
+    var query = Json.obj(
+      "eventTime" -> String,
+      "lat" -> lat,
+      "lng" -> lng,
+      "temperature" -> temperature,
+      "clear" -> clear,
+      "fog" -> fog,
+      "rain" -> rain,
+      "snow" -> snow,
+      "hail" -> hail,
+      "thunder" -> thunder,
+      "tornado" -> tornado,
+      "head" -> heat,
+      "windchill" -> windchill,
+      "precipitation" -> precipitation
+    )
+
+    predictionIO.predict(query).map { json =>
+        Ok(toGeoJson2(json, lat, lng))
+      }
+
+//    predictionIO.predict(eventTime, lat, lng, temperature, clear,
+//      fog, rain, snow, hail, thunder, tornado, heat, windchill, precipitation)
+//      .map { json =>
+//        Ok(toGeoJson2(json, lat, lng))
+//      }
   }
 
-  def fakePredict = Action {
-    Ok(
-      Json.obj(
-        "demand" -> Random.nextInt()
+//  def fakePredict = Action {
+//    Ok(
+//      Json.obj(
+//        "demand" -> Random.nextInt()
+//      )
+//    )
+//  }
+
+  private def toGeoJson2(json: JsValue, lat: Double, lon: Double) = {
+    var demand = (json \ "demand").as[Double]
+
+    Json.obj(
+      "type" -> "Feature",
+      "properties" -> Json.obj(
+        "Primary ID" -> 1,
+        "demand" -> demand
+      ),
+      "geometry" -> Json.obj(
+        "type" -> "Point",
+        "coordinates" -> Json.arr(lon, lat)
       )
     )
   }
