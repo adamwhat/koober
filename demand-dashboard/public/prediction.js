@@ -27,6 +27,8 @@ $(function() {
 
   var date = "2017-03-22"
   var time = "16:00"
+  var lat = 40.7682802
+  var lng = -73.9440917
   var temperature = 20
   var weather = 0
   var weatherArray = [1,0,0,0,0,0,0]
@@ -42,7 +44,7 @@ $(function() {
    });
 
   $("#temperature-input").on("input", function(data){
-    temperature = parseInt($("#temperature-input").val());
+    temperature = parseFloat($("#temperature-input").val());
     console.log(temperature);
     console.log(typeof(temperature));
   });
@@ -69,9 +71,8 @@ $(function() {
 
 
   predictionMap.on('click', function(data) {
-    var lat = data.lngLat.lat;
-    var lng = data.lngLat.lng;
-
+    lat = data.lngLat.lat;
+    lng = data.lngLat.lng;
     $("#latitude-input").val(lat);
     $("#longitude-input").val(lng);
 
@@ -109,55 +110,66 @@ $(function() {
 //      "&snow=" + 0 + "&hail=" + 0 + "&thunder=" + 0 + "&tornado=" + 0
 //      //data: "/demand?lng=" + lng + "&lat=" + lat
 //    });
-
+    var query = buildQueryJson()
     $.ajax({
      url: "http://localhost:5000/queries.json",
      type: 'POST',
      dataType: 'json',
      contentType: 'application/json',
-      data:
-     '{"eventTime": "2017-01-20T18:54:07.000-05:00", "lat": 40.7527999878, "lng": -73.9436721802, "temperature": 28.34, "clear": 1, "fog": 0, "rain": 0, "snow": 0, "hail": 0, "thunder":0, "tornado":0}',
-     success: function (data) {
+      data: query,
+     success: function (d) {
+     console.log(d)
       predictionMap.addSource("demand", {
-      type: "geojson",
-      data: data
+        type: "geojson",
+        data: {"type": "Feature",
+             "properties": {
+                "Primary ID": 1,
+                "demand": d["demand"]
+              },
+              "geometry":{
+                "type": "Point",
+                "coordinates": [lng, lat]
+              }
+            }
       });
+      predictionMap.addLayer({
+              "id": "prediction",
+              "type": "circle",
+              "source": "demand",
+              "paint": {
+                "circle-color": {
+                    property: 'demand',
+                    type: 'exponential',
+                    stops: [
+                          [2.0, '#fee5d9'],
+                          [4.0, '#fcae91'],
+                          [6.0, '#fb6a4a'],
+                          [8.0, '#de2d26'],
+                          [10.0, '#a50f15']
+                        ]
+                },
+                "circle-radius": {
+                    'base': 1.75,
+                    'stops': [[12, 3], [22, 180]]
+                },
+                'circle-opacity' : 0.8
+              }
+      });
+      new mapboxgl.Popup()
+        .setLngLat(data.lngLat)
+        .setHTML('<h2>Demand:' + d["demand"] + '</h2>')
+        .addTo(predictionMap);
     },
       error: function(){
        alert("Cannot get data");
      }
     });
 
-      predictionMap.addLayer({
-        "id": "prediction",
-        "type": "circle",
-        "source": "demand",
-        "paint": {
-          "circle-color": {
-              property: 'demand',
-              type: 'exponential',
-              stops: [
-                    [2.0, '#fee5d9'],
-                    [4.0, '#fcae91'],
-                    [6.0, '#fb6a4a'],
-                    [8.0, '#de2d26'],
-                    [10.0, '#a50f15']
-                  ]
-          },
-          "circle-radius": {
-              'base': 1.75,
-              'stops': [[12, 3], [22, 180]]
-          },
-          'circle-opacity' : 0.8
-        }
-      });
+
 
 
     //todo: make call to predict
-    new mapboxgl.Popup()
-      .setLngLat(data.lngLat)
-      .setHTML('<h2>Demand: 0</h2>')
-      .addTo(predictionMap);
+
 
 //    predictionMap.setFilter('prediction',
 //        ['>=', 'properties.demand', '9.0'],
@@ -166,13 +178,28 @@ $(function() {
 
   });
 
-
   function buildQueryJson(){
+    result = {}
     var datetime = date + " " + time;
     var eventTime = new Date(datetime);
     console.log(datetime);
-    console.log(eventTime.toString());
+    console.log(eventTime.toISOString());
+    result = {
+    "eventTime":eventTime.toISOString(),
+    "lat":lat,
+    "lng":lng,
+    "temperature":temperature,
+    "clear":weatherArray[0],
+    "fog":weatherArray[1],
+    "rain": weatherArray[2],
+    "snow": weatherArray[3],
+    "hail": weatherArray[4],
+    "thunder":weatherArray[5],
+    "tornado":weatherArray[6]
+    }
 
+    console.log(JSON.stringify(result))
+    return JSON.stringify(result)
   }
 
 });
