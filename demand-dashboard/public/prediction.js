@@ -84,25 +84,6 @@ $(function() {
       // ignored
     }
 
-
-//    $.post("/app/controllers/HomeController.predict", {
-//                      "eventTime": "2016-01-20T21:54:07.000-05:00",
-//                      "lat": 40.7527999878,
-//                      "lng": -73.9436721802,
-//                      "temperature": 28.34,
-//                      "clear": 0,
-//                      "fog": 0,
-//                      "rain": 1,
-//                      "snow": 0,
-//                      "hail": 0,
-//                      "thunder":0,
-//                      "tornado":0,
-//                      "heat":1.25,
-//                      "windchill":20.00,
-//                      "precipitation":23.00 }, function(data, status){
-//                      console.log(data)
-//                      })
-
 //    predictionMap.addSource("demand", {
 //      type: "geojson",
 //      data: "/predict?eventTime=" + "2016-01-20T21:54:07.000-05:00" + "&lat=" + 40.7527999878 +
@@ -110,6 +91,7 @@ $(function() {
 //      "&snow=" + 0 + "&hail=" + 0 + "&thunder=" + 0 + "&tornado=" + 0
 //      //data: "/demand?lng=" + lng + "&lat=" + lat
 //    });
+
     var query = buildQueryJson()
     $.ajax({
      url: "http://localhost:5000/queries.json",
@@ -165,11 +147,7 @@ $(function() {
      }
     });
 
-
-
-
     //todo: make call to predict
-
 
 //    predictionMap.setFilter('prediction',
 //        ['>=', 'properties.demand', '9.0'],
@@ -177,7 +155,14 @@ $(function() {
 //    )
 
   });
+  function makeCluster(lat, lng) {
 
+    lats = [lat];
+    lngs = [lng];
+    lats.push(lat + 0.0016, lat + 0.0016, lat + 0.0016, lat, lat, lat - 0.0016, lat - 0.0016, lat - 0.0016);
+    lats.push(lng - 0.0016, lng, lng + 0.0016, lng - 0.0016, lng + 0.0016, lng - 0.0016, lng, lng + 0.0016);
+    return [lats, lngs];
+  }
   function buildQueryJson(){
     result = {}
     var datetime = date + " " + time;
