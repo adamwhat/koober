@@ -123,7 +123,7 @@ $(function() {
             .addTo(predictionMap);
         }
         if (j == latLngArray[0].length-1) {
-            console.log(features)
+            //console.log(features)
             predictionMap.addSource("demand", {
                 type: "geojson",
                 data: {"type": "FeatureCollection",
@@ -183,8 +183,8 @@ $(function() {
     result = {}
     var datetime = date + " " + time;
     var eventTime = new Date(datetime);
-    console.log(datetime);
-    console.log(eventTime.toISOString());
+    //console.log(datetime);
+    //console.log(eventTime.toISOString());
     result = {
     "eventTime":eventTime.toISOString(),
     "lat":lat,
@@ -199,7 +199,7 @@ $(function() {
     "tornado":weatherArray[6]
     }
 
-    console.log(JSON.stringify(result))
+    //console.log(JSON.stringify(result))
     return JSON.stringify(result)
   }
 
