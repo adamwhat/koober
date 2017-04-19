@@ -25,9 +25,21 @@ $(function() {
   $("#latitude-input").val(mapCenter[1]);
   $("#longitude-input").val(mapCenter[0]);
 
+  var date = "2017-03-22"
+  var time = "16:00"
   var temperature = 20
   var weather = 0
   var weatherArray = [1,0,0,0,0,0,0]
+
+  $("#date-select").on("change", function(){
+    console.log(typeof($("#date-select").val()))
+    date = $("#date-select").val()
+   });
+
+  $("#time-select").on("change", function(){
+    console.log($("#time-select").val())
+    time = $("#time-select").val()
+   });
 
   $("#temperature-input").on("input", function(data){
     temperature = parseInt($("#temperature-input").val());
@@ -90,13 +102,30 @@ $(function() {
 //                      console.log(data)
 //                      })
 
-    predictionMap.addSource("demand", {
+//    predictionMap.addSource("demand", {
+//      type: "geojson",
+//      data: "/predict?eventTime=" + "2016-01-20T21:54:07.000-05:00" + "&lat=" + 40.7527999878 +
+//      "&lng=" + -73.9436721802 + "&temperature=" + 28.34 + "&clear=" + 0 + "&fog=" + 0 + "&rain=" + 1 +
+//      "&snow=" + 0 + "&hail=" + 0 + "&thunder=" + 0 + "&tornado=" + 0
+//      //data: "/demand?lng=" + lng + "&lat=" + lat
+//    });
+
+    $.ajax({
+     url: "http://localhost:5000/queries.json",
+     type: 'POST',
+     dataType: 'json',
+     contentType: 'application/json',
+      data:
+     '{"eventTime": "2017-01-20T18:54:07.000-05:00", "lat": 40.7527999878, "lng": -73.9436721802, "temperature": 28.34, "clear": 1, "fog": 0, "rain": 0, "snow": 0, "hail": 0, "thunder":0, "tornado":0}',
+     success: function (data) {
+      predictionMap.addSource("demand", {
       type: "geojson",
-      data: "/predict?eventTime=" + "2016-01-20T21:54:07.000-05:00" + "&lat=" + 40.7527999878 +
-      "&lng=" + -73.9436721802 + "&temperature=" + 28.34 + "&clear=" + 0 + "&fog=" + 0 + "&rain=" + 1 +
-      "&snow=" + 0 + "&hail=" + 0 + "&thunder=" + 0 + "&tornado=" + 0 + "&heat=" + 0 + "&windchill=" + 20.00 +
-      "&precipitation=" + 23.0
-      //data: "/demand?lng=" + lng + "&lat=" + lat
+      data: data
+      });
+    },
+      error: function(){
+       alert("Cannot get data");
+     }
     });
 
       predictionMap.addLayer({
@@ -136,5 +165,14 @@ $(function() {
 //    )
 
   });
+
+
+  function buildQueryJson(){
+    var datetime = date + " " + time;
+    var eventTime = new Date(datetime);
+    console.log(datetime);
+    console.log(eventTime.toString());
+
+  }
 
 });

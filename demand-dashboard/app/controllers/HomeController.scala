@@ -70,8 +70,7 @@ class HomeController @Inject() (configuration: Configuration, predictionIO: Pred
 
   // todo: input checking and error handling
   def predict(eventTime: String, lat: Double, lng: Double, temperature: Double,
-              clear: Int, fog: Int, rain: Int, snow: Int, hail: Int, thunder: Int,
-              tornado: Int, heat: Double, windchill: Double, precipitation: Double) = Action.async {
+              clear: Int, fog: Int, rain: Int, snow: Int, hail: Int, thunder: Int, tornado: Int) = Action.async {
 
     var query = Json.obj(
       "eventTime" -> eventTime,
@@ -84,11 +83,10 @@ class HomeController @Inject() (configuration: Configuration, predictionIO: Pred
       "snow" -> snow,
       "hail" -> hail,
       "thunder" -> thunder,
-      "tornado" -> tornado,
-      "head" -> heat,
-      "windchill" -> windchill,
-      "precipitation" -> precipitation
+      "tornado" -> tornado
     )
+    print("hi")
+    print(query)
 
     predictionIO.predict(query).map { json =>
         Ok(toGeoJson2(json, lat, lng))
