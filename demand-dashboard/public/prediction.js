@@ -93,8 +93,10 @@ $(function() {
 //    });
     var latLngArray = makeCluster(lat, lng)
     var features = []
+    var j = 0
     for (i = 0; i < latLngArray[0].length; i ++){
-        var query = buildQueryJson(latLngArray[0][i], latLngArray[1][i])
+        var query = buildQueryJson(latLngArray[0][j], latLngArray[1][j])
+        //console.log(latLngArray)
         $.ajax({
          url: "http://localhost:5000/queries.json",
          type: 'POST',
@@ -102,27 +104,29 @@ $(function() {
          contentType: 'application/json',
           data: query,
          success: function (d) {
-            console.log(d)
+            //console.log(d)
             features.push({
+                "type": "Feature",
                 "properties": {
-                    "Primary ID": 1,
+                    "Primary ID": j,
                     "demand": d["demand"]
                   },
                   "geometry":{
                     "type": "Point",
-                    "coordinates": [latLngArray[1][i], latLngArray[0][i]]
+                    "coordinates": [latLngArray[1][j], latLngArray[0][j]]
                   }
             });
-        if (i == 0){
+        if (j == 0){
             new mapboxgl.Popup()
             .setLngLat(data.lngLat)
             .setHTML('<h2>Demand:' + d["demand"] + '</h2>')
             .addTo(predictionMap);
         }
-        if (i == latLngArray[0].length-1) {
+        if (j == latLngArray[0].length-1) {
+            console.log(features)
             predictionMap.addSource("demand", {
                 type: "geojson",
-                data: {"type": "Feature Collection",
+                data: {"type": "FeatureCollection",
                        "features": features
                     }
               });
@@ -150,6 +154,7 @@ $(function() {
                   }
               });
         }
+        j += 1;
 
        }, error: function(){
            alert("Cannot get data");
@@ -170,7 +175,7 @@ $(function() {
     lats = [lat];
     lngs = [lng];
     lats.push(lat + 0.0016, lat + 0.0016, lat + 0.0016, lat, lat, lat - 0.0016, lat - 0.0016, lat - 0.0016);
-    lats.push(lng - 0.0016, lng, lng + 0.0016, lng - 0.0016, lng + 0.0016, lng - 0.0016, lng, lng + 0.0016);
+    lngs.push(lng - 0.0016, lng, lng + 0.0016, lng - 0.0016, lng + 0.0016, lng - 0.0016, lng, lng + 0.0016);
     return [lats, lngs];
   }
 
