@@ -1,73 +1,65 @@
 $(function() {
-  // todo: use a default center based on data
-  var mapCenter = [-73.9440917, 40.7682802];
-  $("#latitude-input").val(mapCenter[1]);
-  $("#longitude-input").val(mapCenter[0]);
-  function loadScriptSync (src) {
-      var s = document.createElement('script');
-      s.src = src;
-      s.type = "text/javascript";
-      s.async = false;                                 // <-- this is important
-      document.getElementsByTagName('head')[0].appendChild(s);
-  }
-  loadScriptSync("../assets/geojson.js");
+    // todo: use a default center based on data
+    var mapCenter = [-73.9440917, 40.7682802];
+    $("#latitude-input").val(mapCenter[1]);
+    $("#longitude-input").val(mapCenter[0]);
 
-  $('#date-slider').change(function(e) {
-    $('#date-slider-value').html("6/" + e.target.value.toString() + "/2017");
-  });
-
-  $('#time-slider').change(function(e) {
-       console.log(e.target.value)
-      var input = parseInt(e.target.value);
-      $('#time-slider-value').html(prettyNumbers(Math.floor(input/2)) + ":" + prettyNumbers((input%2)*30) + "-" +
-                            (prettyNumbers(Math.floor((input+1)/2))) + ":" + prettyNumbers(((input+1)%2)*30))
+    $('#date-slider').change(function (e) {
+        $('#date-slider-value').html("6/" + e.target.value.toString() + "/2017");
     });
 
-   function prettyNumbers(number){
-       var result = number.toString()
-       if (result.length == 1){
-           return "0" + result
-       }
-       return result
-     }
-  var actualDemandMap = new mapboxgl.Map({
-    container: 'actual-demand-map',
-    style: 'mapbox://styles/mapbox/streets-v9',
-    zoom: 11,
-    center: mapCenter
-  });
-  function sleep(time){
-    return new Promise((resolve) => setTimeout(resolve, time));
-  }
-  sleep(1000).then(() => {
-     actualDemandMap.addSource("actualDemand", {
-              type: "geojson",
-              data: geoJSONData
-              });
-      actualDemandMap.addLayer({
-                "id": "actual",
-                "type": "circle",
-                "source": "actualDemand",
-                "paint": {
-                  "circle-color": {
-                      property: 'actualDemand',
-                      type: 'exponential',
-                      stops: [
-                            [10.0, '#fee5d9'],
-                            [20.0, '#fcae91'],
-                            [30.0, '#fb6a4a'],
-                            [40.0, '#de2d26'],
-                            [50.0, '#a50f15']
-                          ]
-                  },
-                  "circle-radius": {
-                      'base': 1.75,
-                      'stops': [[12, 3], [22, 180]]
-                  },
-                  'circle-opacity' : 0.8
-                }
+    $('#time-slider').change(function (e) {
+        console.log(e.target.value)
+        var input = parseInt(e.target.value);
+        $('#time-slider-value').html(prettyNumbers(Math.floor(input / 2)) + ":" + prettyNumbers((input % 2) * 30) + "-" +
+            (prettyNumbers(Math.floor((input + 1) / 2))) + ":" + prettyNumbers(((input + 1) % 2) * 30))
+    });
+
+    function prettyNumbers(number) {
+        var result = number.toString()
+        if (result.length == 1) {
+            return "0" + result
+        }
+        return result
+    }
+
+    var actualDemandMap = new mapboxgl.Map({
+        container: 'actual-demand-map',
+        style: 'mapbox://styles/mapbox/streets-v9',
+        zoom: 11,
+        center: mapCenter
+    });
+
+    actualDemandMap.on('load', function () {
+        actualDemandMap.addSource("actualDemand", {
+            type: "geojson",
+            data: "https://s3.amazonaws.com/koober-5152/koober-training.json"
         });
-  });
+
+        actualDemandMap.addLayer({
+            "id": "actual",
+            "type": "circle",
+            "source": "actualDemand",
+            "paint": {
+                "circle-color": {
+                    property: 'actualDemand',
+                    type: 'exponential',
+                    stops: [
+                        [10.0, '#fee5d9'],
+                        [20.0, '#fcae91'],
+                        [30.0, '#fb6a4a'],
+                        [40.0, '#de2d26'],
+                        [50.0, '#a50f15']
+                    ]
+                },
+                "circle-radius": {
+                    'base': 1.75,
+                    'stops': [[12, 3], [22, 180]]
+                },
+                'circle-opacity': 0.8
+            }
+        });
+    });
 
 
   var gradientBoostedTreesMap = new mapboxgl.Map({
