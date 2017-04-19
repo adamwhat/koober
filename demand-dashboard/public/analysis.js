@@ -36,34 +36,39 @@ $(function() {
     zoom: 11,
     center: mapCenter
   });
+  function sleep(time){
+    return new Promise((resolve) => setTimeout(resolve, time));
+  }
+  sleep(1000).then(() => {
+     actualDemandMap.addSource("actualDemand", {
+              type: "geojson",
+              data: geoJSONData
+              });
+      actualDemandMap.addLayer({
+                "id": "actual",
+                "type": "circle",
+                "source": "actualDemand",
+                "paint": {
+                  "circle-color": {
+                      property: 'actualDemand',
+                      type: 'exponential',
+                      stops: [
+                            [10.0, '#fee5d9'],
+                            [20.0, '#fcae91'],
+                            [30.0, '#fb6a4a'],
+                            [40.0, '#de2d26'],
+                            [50.0, '#a50f15']
+                          ]
+                  },
+                  "circle-radius": {
+                      'base': 1.75,
+                      'stops': [[12, 3], [22, 180]]
+                  },
+                  'circle-opacity' : 0.8
+                }
+        });
+  });
 
-  actualDemandMap.addSource("actualDemand", {
-          type: "geojson",
-          data: geoJSONData
-          });
-  actualDemandMap.addLayer({
-            "id": "actual",
-            "type": "circle",
-            "source": "actualDemand",
-            "paint": {
-              "circle-color": {
-                  property: 'actualDemand',
-                  type: 'exponential',
-                  stops: [
-                        [10.0, '#fee5d9'],
-                        [20.0, '#fcae91'],
-                        [30.0, '#fb6a4a'],
-                        [40.0, '#de2d26'],
-                        [50.0, '#a50f15']
-                      ]
-              },
-              "circle-radius": {
-                  'base': 1.75,
-                  'stops': [[12, 3], [22, 180]]
-              },
-              'circle-opacity' : 0.8
-            }
-    });
 
   var gradientBoostedTreesMap = new mapboxgl.Map({
     container: 'gradient-boosted-trees-map',
