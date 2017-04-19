@@ -139,11 +139,11 @@ $(function() {
                         property: 'demand',
                         type: 'exponential',
                         stops: [
-                              [2.0, '#fee5d9'],
-                              [4.0, '#fcae91'],
-                              [6.0, '#fb6a4a'],
-                              [8.0, '#de2d26'],
-                              [10.0, '#a50f15']
+                              [10.0, '#fee5d9'],
+                              [20.0, '#fcae91'],
+                              [30.0, '#fb6a4a'],
+                              [40.0, '#de2d26'],
+                              [50.0, '#a50f15']
                             ]
                     },
                     "circle-radius": {
