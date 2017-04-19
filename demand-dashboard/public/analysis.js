@@ -17,7 +17,7 @@ $(function() {
   actualDemandMap.addLayer({
             "id": "actual",
             "type": "circle",
-            "source": "demand",
+            "source": "actualDemand",
             "paint": {
               "circle-color": {
                   property: 'actualDemand',
