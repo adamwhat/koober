@@ -5,6 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Analysis Dashboard</title>
+    <script src="@routes.Assets.versioned("geojson.js")"></script>
     <link rel="stylesheet" href="@routes.Assets.versioned("main.css")">
     <link href="https://api.mapbox.com/mapbox-gl-js/v0.28.0/mapbox-gl.css" rel="stylesheet" type="text/css"/>
     <link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v3.0.2/mapbox-gl-directions.css" rel="stylesheet" type="text/css"/>
@@ -12,7 +13,6 @@
         <script src="https://api.mapbox.com/mapbox-gl-js/v0.28.0/mapbox-gl.js"></script>
     <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v3.0.2/mapbox-gl-directions.js"></script>
     <script src="https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.0/turf.min.js" charset="utf-8"></script>
-    <script src="@routes.Assets.versioned("geojson.js")"></script>
     <script src="@routes.Assets.versioned("analysis.js")"></script>
 
     <!-- jQuery UI Slider -->
@@ -20,7 +20,7 @@
     <script src="@routes.Assets.versioned("lib/jquery-ui/jquery-ui.min.js")"></script>
     <link rel="stylesheet" href="@routes.Assets.versioned("lib/jquery-ui/jquery-ui.min.css")">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <link rel="stylesheet" href="/resources/demos/style.css">
+    <link href='//mapbox.com/base/latest/base.css' rel='stylesheet' />
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
