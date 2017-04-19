@@ -84,25 +84,6 @@ $(function() {
       // ignored
     }
 
-
-//    $.post("/app/controllers/HomeController.predict", {
-//                      "eventTime": "2016-01-20T21:54:07.000-05:00",
-//                      "lat": 40.7527999878,
-//                      "lng": -73.9436721802,
-//                      "temperature": 28.34,
-//                      "clear": 0,
-//                      "fog": 0,
-//                      "rain": 1,
-//                      "snow": 0,
-//                      "hail": 0,
-//                      "thunder":0,
-//                      "tornado":0,
-//                      "heat":1.25,
-//                      "windchill":20.00,
-//                      "precipitation":23.00 }, function(data, status){
-//                      console.log(data)
-//                      })
-
 //    predictionMap.addSource("demand", {
 //      type: "geojson",
 //      data: "/predict?eventTime=" + "2016-01-20T21:54:07.000-05:00" + "&lat=" + 40.7527999878 +
@@ -111,8 +92,9 @@ $(function() {
 //      //data: "/demand?lng=" + lng + "&lat=" + lat
 //    });
     var latLngArray = makeCluster(lat, lng)
+    var features = []
     for (i = 0; i < latLngArray[0].length; i ++){
-        var query = buildQueryJson(lat, lng)
+        var query = buildQueryJson(latLngArray[0][i], latLngArray[1][i])
         $.ajax({
          url: "http://localhost:5000/queries.json",
          type: 'POST',
@@ -120,21 +102,31 @@ $(function() {
          contentType: 'application/json',
           data: query,
          success: function (d) {
-         console.log(d)
-          predictionMap.addSource("demand", {
-            type: "geojson",
-            data: {"type": "Feature",
-                 "properties": {
+            console.log(d)
+            features.push({
+                "properties": {
                     "Primary ID": 1,
                     "demand": d["demand"]
                   },
                   "geometry":{
                     "type": "Point",
-                    "coordinates": [lng, lat]
+                    "coordinates": [latLngArray[1][i], latLngArray[0][i]]
                   }
-                }
-          });
-          predictionMap.addLayer({
+            });
+        if (i == 0){
+            new mapboxgl.Popup()
+            .setLngLat(data.lngLat)
+            .setHTML('<h2>Demand:' + d["demand"] + '</h2>')
+            .addTo(predictionMap);
+        }
+        if (i == latLngArray[0].length-1) {
+            predictionMap.addSource("demand", {
+                type: "geojson",
+                data: {"type": "Feature Collection",
+                       "features": features
+                    }
+              });
+            predictionMap.addLayer({
                   "id": "prediction",
                   "type": "circle",
                   "source": "demand",
@@ -156,25 +148,17 @@ $(function() {
                     },
                     'circle-opacity' : 0.8
                   }
-          });
-          new mapboxgl.Popup()
-            .setLngLat(data.lngLat)
-            .setHTML('<h2>Demand:' + d["demand"] + '</h2>')
-            .addTo(predictionMap);
-        },
-          error: function(){
+              });
+        }
+
+       }, error: function(){
            alert("Cannot get data");
          }
         });
 
     }
 
-
-
-
-
     //todo: make call to predict
-
 
 //    predictionMap.setFilter('prediction',
 //        ['>=', 'properties.demand', '9.0'],
@@ -182,8 +166,15 @@ $(function() {
 //    )
 
   });
+  function makeCluster(lat, lng) {
+    lats = [lat];
+    lngs = [lng];
+    lats.push(lat + 0.0016, lat + 0.0016, lat + 0.0016, lat, lat, lat - 0.0016, lat - 0.0016, lat - 0.0016);
+    lats.push(lng - 0.0016, lng, lng + 0.0016, lng - 0.0016, lng + 0.0016, lng - 0.0016, lng, lng + 0.0016);
+    return [lats, lngs];
+  }
 
-  function buildQueryJson(lat: Double, lng: Double){
+  function buildQueryJson(lat, lng){
     result = {}
     var datetime = date + " " + time;
     var eventTime = new Date(datetime);
