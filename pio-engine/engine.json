@@ -33,6 +33,14 @@
         "regParam" : 0.5,
         "convergenceTol": 0.01
         }
+      },
+      {
+        "name": "randomForest",
+        "params": {
+          "numTrees": "100",
+          "maxDepth": "30",
+          "numBins": "256"
+        }
       }
   ]
 }
