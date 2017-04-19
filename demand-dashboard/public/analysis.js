@@ -4,6 +4,24 @@ $(function() {
   $("#latitude-input").val(mapCenter[1]);
   $("#longitude-input").val(mapCenter[0]);
 
+  $('#date-slider').change(function(e) {
+    $('#date-slider-value').html("6/" + e.target.value.toString() + "/2017");
+  });
+
+  $('#time-slider').change(function(e) {
+       console.log(e.target.value)
+      var input = parseInt(e.target.value);
+      $('#time-slider-value').html(prettyNumbers(Math.floor(input/2)) + ":" + prettyNumbers((input%2)*30) + "-" +
+                            (prettyNumbers(Math.floor((input+1)/2))) + ":" + prettyNumbers(((input+1)%2)*30))
+    });
+
+   function prettyNumbers(number){
+       var result = number.toString()
+       if (result.length == 1){
+           return "0" + result
+       }
+       return result
+     }
   var actualDemandMap = new mapboxgl.Map({
     container: 'actual-demand-map',
     style: 'mapbox://styles/mapbox/streets-v9',
@@ -73,21 +91,4 @@ $(function() {
       center: mapCenter
     });
 
-  document.getElementById('date-slider').addEventListener('input', function(e) {
-    document.getElementById('date-slider-value').textContent = "6/" + e.target.value.toString() + "/2017"
-  });
-
-  document.getElementById('time-slider').addEventListener('input', function(e) {
-    var input = parseInt(e.target.value);
-    document.getElementById('time-slider-value').textContent = (prettyNumbers(Math.floor(input/2)) + ":" + prettyNumbers((input%2)*30) + "-" +
-                                                              (prettyNumbers(Math.floor((input+1)/2))) + ":" + prettyNumbers(((input+1)%2)*30))
-  });
-
-  function prettyNumbers(number){
-    var result = number.toString()
-    if (result.length == 1){
-        return "0" + result
-    }
-    return result
-  }
 });
