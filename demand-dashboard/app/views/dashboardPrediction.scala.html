@@ -76,6 +76,30 @@
                     <input id="longitude-input" type="text" placeholder="Longitude" required title="Enter a longitude!"><br>
                 </div>
             </div>
+            <div id="weather-card" class="dashboard-card">
+                <h2 class="card-title">Weather</h2>
+                <div class="card-divider"></div>
+                <div id="temperature-field" class="input-field">
+                    <div class="input-field-icon">
+                        <img src="../assets/LatitudeIcon.png" alt="temperature">
+                    </div>
+                    <input id="temperature-input" type="text" placeholder="Celsius" required title="Enter a Temperature!"><br>
+                </div>
+                <div id="weather-field" class="input-field">
+                    <div class="input-field-icon">
+                        <img src="../assets/LongitudeIcon.png" alt="weather">
+                    </div>
+                    <select id="weather-select" required title="Choose as weather!">
+                        <option selected="selected" value="0">Clear</option>
+                        <option value="1">Fog</option>
+                        <option value="2">Rain</option>
+                        <option value="3">Snow</option>
+                        <option value="4">Hail</option>
+                        <option value="5">Thunder</option>
+                        <option value="6">Tornado</option>
+                    </select>
+                </div>
+            </div>
             <div id="algorithm-card" class="dashboard-card">
                 <h2 class="card-title">Algorithm</h2>
                 <div class="card-divider"></div>

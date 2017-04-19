@@ -25,6 +25,26 @@ $(function() {
   $("#latitude-input").val(mapCenter[1]);
   $("#longitude-input").val(mapCenter[0]);
 
+  var temperature = 20
+  var weather = 0
+  var weatherArray = [1,0,0,0,0,0,0]
+
+  $("#temperature-input").on("input", function(data){
+    temperature = parseInt($("#temperature-input").val());
+    console.log(temperature);
+    console.log(typeof(temperature));
+  });
+
+  $("#weather-select").on("change", function(){
+    weather = parseInt($("#weather-select").val())
+    console.log(weather)
+    console.log(typeof(weather))
+    weatherArray = [0,0,0,0,0,0,0]
+    weatherArray[weather] = 1
+    console.log(weatherArray)
+  });
+
+
   var predictionMap = new mapboxgl.Map({
     container: 'prediction-map',
     style: 'mapbox://styles/mapbox/streets-v9',
