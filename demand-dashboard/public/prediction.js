@@ -174,8 +174,8 @@ $(function() {
   function makeCluster(lat, lng) {
     lats = [lat];
     lngs = [lng];
-    lats.push(lat + 0.0016, lat + 0.0016, lat + 0.0016, lat, lat, lat - 0.0016, lat - 0.0016, lat - 0.0016);
-    lngs.push(lng - 0.0016, lng, lng + 0.0016, lng - 0.0016, lng + 0.0016, lng - 0.0016, lng, lng + 0.0016);
+    lats.push(lat + 2*0.0016, lat + 0.0016, lat + 0.0016, lat + 0.0016, lat, lat, lat, lat, lat - 0.0016, lat - 0.0016, lat - 0.0016, lat - 2*0.0016);
+    lngs.push(lng, lng - 0.0016, lng, lng + 0.0016, lng - 2*0.0016, lng - 0.0016, lng + 0.0016, lng + 2*0.0016, lng - 0.0016, lng, lng + 0.0016, lng);
     return [lats, lngs];
   }
 
