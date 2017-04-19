@@ -3,6 +3,14 @@ $(function() {
   var mapCenter = [-73.9440917, 40.7682802];
   $("#latitude-input").val(mapCenter[1]);
   $("#longitude-input").val(mapCenter[0]);
+  function loadScriptSync (src) {
+      var s = document.createElement('script');
+      s.src = src;
+      s.type = "text/javascript";
+      s.async = false;                                 // <-- this is important
+      document.getElementsByTagName('head')[0].appendChild(s);
+  }
+  loadScriptSync("../assets/geojson.js");
 
   var actualDemandMap = new mapboxgl.Map({
     container: 'actual-demand-map',
@@ -10,6 +18,7 @@ $(function() {
     zoom: 11,
     center: mapCenter
   });
+
   actualDemandMap.addSource("actualDemand", {
           type: "geojson",
           data: geoJSONData
