@@ -78,7 +78,7 @@ $(function() {
 
     try {
       predictionMap.removeSource("demand");
-      predictionMap.removeLayer("unclustered-points");
+      predictionMap.removeLayer("prediction");
     }
     catch (e) {
       // ignored
