@@ -84,84 +84,108 @@ $(function() {
       // ignored
     }
 
-//    predictionMap.addSource("demand", {
-//      type: "geojson",
-//      data: "/predict?eventTime=" + "2016-01-20T21:54:07.000-05:00" + "&lat=" + 40.7527999878 +
-//      "&lng=" + -73.9436721802 + "&temperature=" + 28.34 + "&clear=" + 0 + "&fog=" + 0 + "&rain=" + 1 +
-//      "&snow=" + 0 + "&hail=" + 0 + "&thunder=" + 0 + "&tornado=" + 0
-//      //data: "/demand?lng=" + lng + "&lat=" + lat
-//    });
-    var latLngArray = makeCluster(lat, lng)
-    var features = []
-    var j = 0
-    for (i = 0; i < latLngArray[0].length; i ++){
-        var query = buildQueryJson(latLngArray[0][j], latLngArray[1][j])
-        //console.log(latLngArray)
-        $.ajax({
-         url: "http://localhost:5000/queries.json",
-         type: 'POST',
-         dataType: 'json',
-         contentType: 'application/json',
-          data: query,
-         success: function (d) {
-            //console.log(d)
-            features.push({
-                "type": "Feature",
-                "properties": {
-                    "Primary ID": j,
-                    "demand": d["demand"]
-                  },
-                  "geometry":{
-                    "type": "Point",
-                    "coordinates": [latLngArray[1][j], latLngArray[0][j]]
-                  }
-            });
-        if (j == 0){
-            new mapboxgl.Popup()
-            .setLngLat(data.lngLat)
-            .setHTML('<h2>Demand:' + d["demand"] + '</h2>')
-            .addTo(predictionMap);
-        }
-        if (j == latLngArray[0].length-1) {
-            //console.log(features)
-            predictionMap.addSource("demand", {
-                type: "geojson",
-                data: {"type": "FeatureCollection",
-                       "features": features
-                    }
-              });
-            predictionMap.addLayer({
-                  "id": "prediction",
-                  "type": "circle",
-                  "source": "demand",
-                  "paint": {
-                    "circle-color": {
-                        property: 'demand',
-                        type: 'exponential',
-                        stops: [
-                              [10.0, '#fee5d9'],
-                              [20.0, '#fcae91'],
-                              [30.0, '#fb6a4a'],
-                              [40.0, '#de2d26'],
-                              [50.0, '#a50f15']
-                            ]
-                    },
-                    "circle-radius": {
-                        'base': 1.75,
-                        'stops': [[12, 3], [22, 180]]
-                    },
-                    'circle-opacity' : 0.8
-                  }
-              });
-        }
-        j += 1;
+    predictionMap.addSource("demand", {
+      type: "geojson",
+      data: "/predict?eventTime=" + "2016-01-20T21:54:07.000-05:00" + "&lat=" + 40.7527999878 +
+      "&lng=" + -73.9436721802 + "&temperature=" + 28.34 + "&clear=" + 0 + "&fog=" + 0 + "&rain=" + 1 +
+      "&snow=" + 0 + "&hail=" + 0 + "&thunder=" + 0 + "&tornado=" + 0
+      //data: "/demand?lng=" + lng + "&lat=" + lat
+    });
+    predictionMap.addLayer({
+          "id": "prediction",
+          "type": "circle",
+          "source": "demand",
+          "paint": {
+            "circle-color": {
+                property: 'demand',
+                type: 'exponential',
+                stops: [
+                      [10.0, '#fee5d9'],
+                      [20.0, '#fcae91'],
+                      [30.0, '#fb6a4a'],
+                      [40.0, '#de2d26'],
+                      [50.0, '#a50f15']
+                    ]
+            },
+            "circle-radius": {
+                'base': 1.75,
+                'stops': [[12, 3], [22, 180]]
+            },
+            'circle-opacity' : 0.8
+          }
+      });
 
-       }, error: function(){
-           alert("Cannot get data");
-         }
-        });
-
-    }
+//    var latLngArray = makeCluster(lat, lng)
+//    var features = []
+//    var j = 0
+//    for (i = 0; i < latLngArray[0].length; i ++){
+//        var query = buildQueryJson(latLngArray[0][j], latLngArray[1][j])
+//        //console.log(latLngArray)
+//        $.ajax({
+//         url: "http://localhost:5000/queries.json",
+//         type: 'POST',
+//         dataType: 'json',
+//         contentType: 'application/json',
+//          data: query,
+//         success: function (d) {
+//            //console.log(d)
+//            features.push({
+//                "type": "Feature",
+//                "properties": {
+//                    "Primary ID": j,
+//                    "demand": d["demand"]
+//                  },
+//                  "geometry":{
+//                    "type": "Point",
+//                    "coordinates": [latLngArray[1][j], latLngArray[0][j]]
+//                  }
+//            });
+//        if (j == 0){
+//            new mapboxgl.Popup()
+//            .setLngLat(data.lngLat)
+//            .setHTML('<h2>Demand:' + d["demand"] + '</h2>')
+//            .addTo(predictionMap);
+//        }
+//        if (j == latLngArray[0].length-1) {
+//            //console.log(features)
+//            predictionMap.addSource("demand", {
+//                type: "geojson",
+//                data: {"type": "FeatureCollection",
+//                       "features": features
+//                    }
+//              });
+//            predictionMap.addLayer({
+//                  "id": "prediction",
+//                  "type": "circle",
+//                  "source": "demand",
+//                  "paint": {
+//                    "circle-color": {
+//                        property: 'demand',
+//                        type: 'exponential',
+//                        stops: [
+//                              [10.0, '#fee5d9'],
+//                              [20.0, '#fcae91'],
+//                              [30.0, '#fb6a4a'],
+//                              [40.0, '#de2d26'],
+//                              [50.0, '#a50f15']
+//                            ]
+//                    },
+//                    "circle-radius": {
+//                        'base': 1.75,
+//                        'stops': [[12, 3], [22, 180]]
+//                    },
+//                    'circle-opacity' : 0.8
+//                  }
+//              });
+//        }
+//        j += 1;
+//
+//       }, error: function(){
+//           alert("Cannot get data");
+//         }
+//        });
+//
+//    }
 
     //todo: make call to predict
 

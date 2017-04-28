@@ -27,8 +27,10 @@ class PredictionIOImpl @Inject() (configuration: Configuration, wsClient: WSClie
 //                        : Future[JsValue] = {
 
   override def predict(json: JsValue) : Future[JsValue] = {
+    print(predictionIOUrl)
     wsClient.url(predictionIOUrl).post(json)
       .map { response =>
+        println(response.body)
         response.json
       }
   }
