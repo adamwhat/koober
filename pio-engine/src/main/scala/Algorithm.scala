@@ -17,6 +17,7 @@ import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 //import org.deeplearning4j.nn.conf.layers.Layer
 import org.deeplearning4j.nn.conf.layers.DenseLayer;
 import org.deeplearning4j.nn.conf.layers.OutputLayer;
+import org.deeplearning4j.nn.conf.layers.RnnOutputLayer;
 import org.deeplearning4j.nn.conf.Updater;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.params.DefaultParamInitializer;
@@ -61,16 +62,17 @@ class Algorithm(val ap: AlgorithmParams)
         .list()
         .layer(0, new DenseLayer.Builder().nIn(9).nOut(20)
           .activation(Activation.TANH).build())
-        .layer(1, new OutputLayer.Builder(MSE)
+        .layer(1, new RnnOutputLayer.Builder(MSE)
           .activation(Activation.IDENTITY)
-          .nIn(20).nOut(5000).build())
+          .nIn(20).nOut(10000).build())
         .backprop(true).pretrain(false).build()
-    
+    conf.setPretrain(true)
     val model : MultiLayerNetwork = new MultiLayerNetwork(conf)
     model.init()
     model.setListeners(new ScoreIterationListener(ap.listenerFreq))
 
-    model.fit(preparedData.dataSet)
+    //println((preparedData.dataSet)
+    model.fit(preparedData.dataSet)//, preparedData.labels)
 
     new Model(model, Preparator.locationClusterModel.get, Preparator.standardScalerModel.get)
   }

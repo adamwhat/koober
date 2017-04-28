@@ -16,7 +16,8 @@ import org.nd4j.linalg.dataset.DataSet
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 class PreparedData(
-  val dataSet: DataSet,
+  //val dataSet: DataSet,
+  val dataSet: INDArray, // inputs array
   val labels: Array[Double]
 ) extends Serializable
 //     with SanityCheck {
@@ -68,19 +69,24 @@ class Preparator extends PPreparator[TrainingData, PreparedData] {
 
     } cache ()
 
-    var dataArray : Array[Array[Double]] = data.collect().toArray.slice(0,5000)
-    println(dataArray.size)
+    var dataArray : Array[Array[Double]] = data.collect().toArray
+    //println(dataArray.size)
 
-    var labels = dataArray.transpose.head
     var features = dataArray.transpose.tail.transpose
+    var labels = dataArray.transpose.head
 
-    println("features size = " + features.size)
-    println("labels size = " + labels.size)
+    println("features size = " + features.size + " x " + dataArray.transpose.tail.size)
+    println("labels size = " + labels.size )
+
+    //println(features)
 
     var dataset = new DataSet(Nd4j.create(features), Nd4j.create(labels))
+    var inputINDArray = Nd4j.create(features)
 
-    new PreparedData(dataset, labels)
-    
+    //println(inputINDArray)
+    //new PreparedData(dataset, labels)
+    new PreparedData(inputINDArray, labels)
+    //new PreparedData(features, labels)
   }
 }
 

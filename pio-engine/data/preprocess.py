@@ -17,7 +17,7 @@ def convert_data():
         print type(data)
         dd.io.save(OUTPUT_PATH_TEMPLATE % (i), data)
 
-def sample_data(data_id, percentage = 0.001):
+def sample_data(data_id, percentage = 0.0001):
     print "Loading data %d" % data_id
     data = dd.io.load(OUTPUT_PATH_TEMPLATE % (data_id))
     print "Sampling data %d" % data_id
