@@ -85,11 +85,9 @@ $(function() {
     }
 
     predictionMap.addSource("demand", {
-      type: "geojson",
-      data: "/predict?eventTime=" + "2016-01-20T21:54:07.000-05:00" + "&lat=" + 40.7527999878 +
-      "&lng=" + -73.9436721802 + "&temperature=" + 28.34 + "&clear=" + 0 + "&fog=" + 0 + "&rain=" + 1 +
-      "&snow=" + 0 + "&hail=" + 0 + "&thunder=" + 0 + "&tornado=" + 0
-      //data: "/demand?lng=" + lng + "&lat=" + lat
+         type: "geojson",
+         data: "/predict?" + buildQueryString(lat, lng)
+//         data: "/demand?lng=" + lng + "&lat=" + lat
     });
     predictionMap.addLayer({
           "id": "prediction",
@@ -227,4 +225,12 @@ $(function() {
     return JSON.stringify(result)
   }
 
-});
+   function buildQueryString(lat, lng){
+       var datetime = date + " " + time;
+       var eventTime = new Date(datetime);
+       return "eventTime=" + eventTime.toISOString() + "&lat=" + lat +
+             "&lng=" + lng + "&temperature=" + temperature + "&clear=" + weatherArray[0] + "&fog=" + weatherArray[1] +
+             "&rain=" + weatherArray[2] + "&snow=" + weatherArray[3] + "&hail=" + weatherArray[4]
+              + "&thunder=" + weatherArray[5] + "&tornado=" + weatherArray[6]
+       }
+    });
