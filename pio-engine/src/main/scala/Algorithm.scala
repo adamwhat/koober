@@ -90,7 +90,7 @@ class Model(mod: MultiLayerNetwork, locationClusterModel: KMeansModel, standardS
     val normalizedTimeFeatureVector = standardScalerModel.transform(Preparator.toFeaturesVector(DateTime.parse(query.eventTime), query.lat, query.lng))
     val locationClusterLabel = locationClusterModel.predict(Vectors.dense(query.lat, query.lng))
     val features = Preparator.toFeaturesVector(normalizedTimeFeatureVector, locationClusterLabel)
-    
+    println (features.toArray)
     mod.predict(Nd4j.create(features.toArray))(0).toDouble
   }
 }
