@@ -72,25 +72,59 @@ class HomeController @Inject() (configuration: Configuration, predictionIO: Pred
   def predict(eventTime: String, lat: Double, lng: Double, temperature: Double,
               clear: Int, fog: Int, rain: Int, snow: Int, hail: Int, thunder: Int, tornado: Int) = Action.async {
 
-    var query = Json.obj(
-      "eventTime" -> eventTime,
-      "lat" -> lat,
-      "lng" -> lng,
-      "temperature" -> temperature,
-      "clear" -> clear,
-      "fog" -> fog,
-      "rain" -> rain,
-      "snow" -> snow,
-      "hail" -> hail,
-      "thunder" -> thunder,
-      "tornado" -> tornado
-    )
-    print("hi")
-    print(query)
+    var lngLatArray = makeCluster(lat, lng)
+//    var resultSeq = new ListBuffer[Future[JsValue]](lngLatArray(0).length)
 
-    predictionIO.predict(query).map { json =>
-        Ok(toGeoJson2(json, lat, lng))
-      }
+    val resultSeq = (0 to (lngLatArray(0).length - 1)).map(i => {
+        var query = Json.obj(
+          "eventTime" -> eventTime,
+          "lat" -> lngLatArray(0)(i),
+          "lng" -> lngLatArray(1)(i),
+          "temperature" -> temperature,
+          "clear" -> clear,
+          "fog" -> fog,
+          "rain" -> rain,
+          "snow" -> snow,
+          "hail" -> hail,
+          "thunder" -> thunder,
+          "tornado" -> tornado
+        )
+        print("hi")
+        print(query)
+        var prediction = predictionIO.predict(query)
+        prediction.map{json => toGeoJson2(json, lngLatArray(0)(i), lngLatArray(1)(i), i) }
+
+    })
+
+    var result = Future.sequence(resultSeq)
+    result.map{r => Ok(toGeoJsonCollection(r))}
+
+//    for ( i <- 0 to (lngLatArray(0).length - 1)) {
+//      var query = Json.obj(
+//        "eventTime" -> eventTime,
+//        "lat" -> lngLatArray(0)(i),
+//        "lng" -> lngLatArray(1)(i),
+//        "temperature" -> temperature,
+//        "clear" -> clear,
+//        "fog" -> fog,
+//        "rain" -> rain,
+//        "snow" -> snow,
+//        "hail" -> hail,
+//        "thunder" -> thunder,
+//        "tornado" -> tornado
+//      )
+//      print("hi")
+//      print(query)
+//      var prediction = predictionIO.predict(query)
+////      predictionIO.predict(query).map { json =>
+////        Ok(toGeoJson2(json, lat, lng))
+////      }
+//      resultSeq(i) = prediction.map{json => toGeoJson2(json, lngLatArray(0)(i), lngLatArray(1)(i), i)}
+//
+//    }
+//    var result = Future.sequence(resultSeq)
+//    resuls.map{r => Ok(toGeoJsonCollection(r))}
+
 
 //    predictionIO.predict(eventTime, lat, lng, temperature, clear,
 //      fog, rain, snow, hail, thunder, tornado, heat, windchill, precipitation)
@@ -107,13 +141,13 @@ class HomeController @Inject() (configuration: Configuration, predictionIO: Pred
 //    )
 //  }
 
-  private def toGeoJson2(json: JsValue, lat: Double, lon: Double) = {
+  private def toGeoJson2(json: JsValue, lat: Double, lon: Double, id: Int) = {
     var demand = (json \ "demand").as[Double]
 
     Json.obj(
       "type" -> "Feature",
       "properties" -> Json.obj(
-        "Primary ID" -> 1,
+        "Primary ID" -> id,
         "demand" -> demand
       ),
       "geometry" -> Json.obj(
@@ -137,6 +171,14 @@ class HomeController @Inject() (configuration: Configuration, predictionIO: Pred
     )
   }
 
+  private def toGeoJsonCollection(demands: IndexedSeq[JsValue]) = {
+    print(demands)
+    Json.obj(
+      "type" -> "FeatureCollection",
+      "features" -> demands
+    )
+  }
+
   def demand(lng: Double, lat: Double) = Action {
     val points = Seq.fill(50) {
       val newLng = lng + (0.1 * Random.nextDouble()) - 0.05
@@ -156,6 +198,13 @@ class HomeController @Inject() (configuration: Configuration, predictionIO: Pred
         "features" -> points
       )
     )
+  }
+
+
+  def makeCluster(lat:Double, lng:Double) : Array[Array[Double]] = {
+    var lats = Array(lat, lat + 2*0.0016, lat + 0.0016, lat + 0.0016, lat + 0.0016, lat, lat, lat, lat, lat - 0.0016, lat - 0.0016, lat - 0.0016, lat - 2*0.0016)
+    var lngs = Array(lng, lng, lng - 0.0016, lng, lng + 0.0016, lng - 2*0.0016, lng - 0.0016, lng + 0.0016, lng + 2*0.0016, lng - 0.0016, lng, lng + 0.0016, lng)
+    Array(lats, lngs)
   }
 
 }
