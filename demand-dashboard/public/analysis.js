@@ -33,7 +33,7 @@ $(function() {
     actualDemandMap.on('load', function () {
         actualDemandMap.addSource("actualDemand", {
             type: "geojson",
-            data: "https://s3.amazonaws.com/koober-5152/koober-training.json"
+            data: "/assets/koober-training.json"
         });
 
         actualDemandMap.addLayer({
