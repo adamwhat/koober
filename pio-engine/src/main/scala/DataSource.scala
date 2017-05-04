@@ -16,9 +16,24 @@ case class DataSourceParams(
                            ) extends Params
 
 class UserEvent(
+<<<<<<< HEAD
   val eventTime:  DateTime,
   val lat:        Double,
   val lng:        Double
+=======
+  val eventTime:   DateTime,
+  val lat:         Double,
+  val lng:         Double,
+  val temperature: Double,
+  val clear:       Int,
+  val fog:         Int,
+  val rain:        Int,
+  val snow:        Int,
+  val hail:        Int,
+  val thunder:     Int,
+  val tornado:     Int
+
+>>>>>>> 581b39ed71f2f0552c1b1e87830b54fccc87e57a
 ) extends Serializable
 
 class DataSource(val dsp: DataSourceParams)
@@ -37,7 +52,19 @@ class DataSource(val dsp: DataSourceParams)
         new UserEvent(
           eventTime = event.eventTime,
           lat = event.properties.get[Double]("lat"),
+<<<<<<< HEAD
           lng = event.properties.get[Double]("lng")
+=======
+          lng = event.properties.get[Double]("lng"),
+          temperature = event.properties.get[Double]("temperature"),
+          clear = event.properties.get[Int]("clear"),
+          fog = event.properties.get[Int]("fog"),
+          rain = event.properties.get[Int]("rain"),
+          snow = event.properties.get[Int]("snow"),
+          hail = event.properties.get[Int]("hail"),
+          thunder = event.properties.get[Int]("thunder"),
+          tornado = event.properties.get[Int]("tornado")
+>>>>>>> 581b39ed71f2f0552c1b1e87830b54fccc87e57a
         )
       } catch {
         case e: Exception =>
@@ -67,18 +94,33 @@ class DataSource(val dsp: DataSourceParams)
     val sortedData = data.sortBy(ue=>ue.eventTime.getMillis());
     val indexedPoints: RDD[(UserEvent, Long)] = sortedData.zipWithIndex()
     val count = sortedData.count().toInt
+<<<<<<< HEAD
 
     (0 until count).map { idx =>
       val trainingPoints = indexedPoints.filter(_._2 <= evalK*count).map(_._1)
       val testingPoints = indexedPoints.filter(_._2 > evalK*count).map(_._1)
       val testingNormalized = KooberUtil.createNormalizedMap(testingPoints)
       val testingCountMap = KooberUtil.createCountMap(testingNormalized.values)
+=======
+    val trainingPoints = indexedPoints.filter(_._2 <= evalK*count).map(_._1)
+    val testingPoints = indexedPoints.filter(_._2 > evalK*count).map(_._1)
+    (0 until count).map { idx =>
+      val testingNormalized = KooberUtil.createNormalizedMap(testingPoints)
+      val testingCountMap = KooberUtil.createCountMap(testingNormalized.values)
+      val testingNormalizedMap = testingNormalized.collectAsMap()
+>>>>>>> 581b39ed71f2f0552c1b1e87830b54fccc87e57a
       (
         new TrainingData(trainingPoints),
         new EmptyEvaluationInfo(),
         testingPoints.map {
+<<<<<<< HEAD
           p => (new Query(p.eventTime.toString(), p.lat, p.lng),
             new ActualResult(testingCountMap.get(testingNormalized.filter(e=>e._1 == p.eventTime).collect()(0)._2).get))
+=======
+          p => (new Query(p.eventTime.toString(), p.lat, p.lng, p.temperature, p.clear, p.fog, p.rain, p.snow, p.hail,
+            p.thunder, p.tornado),
+            new ActualResult(testingCountMap(testingNormalizedMap(p.eventTime))))
+>>>>>>> 581b39ed71f2f0552c1b1e87830b54fccc87e57a
         }
       )
     }

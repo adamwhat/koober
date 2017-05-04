@@ -32,6 +32,11 @@ $(function() {
     center: mapCenter
   });
 
+<<<<<<< HEAD
+=======
+    predictionMap.addControl(new mapboxgl.NavigationControl({position: 'top-left'}));
+
+>>>>>>> 581b39ed71f2f0552c1b1e87830b54fccc87e57a
   predictionMap.on('click', function(data) {
     var lat = data.lngLat.lat;
     var lng = data.lngLat.lng;
@@ -49,6 +54,7 @@ $(function() {
 
     predictionMap.addSource("demand", {
       type: "geojson",
+<<<<<<< HEAD
       data: "/demand?lng=" + lng + "&lat=" + lat,
       cluster: true,
       clusterMaxZoom: 15,
@@ -97,11 +103,62 @@ $(function() {
       },
       "filter": ["!=", "cluster", true]
     }, 'waterway-label');
+=======
+      data: "/demand?lng=" + lng + "&lat=" + lat
+    });
+
+      predictionMap.addLayer({
+        "id": "prediction",
+        "type": "circle",
+        "source": "demand",
+        "paint": {
+          "circle-color": {
+              property: 'demand',
+              type: 'exponential',
+              stops: [
+                    [2.0, '#fee5d9'],
+                    [4.0, '#fcae91'],
+                    [6.0, '#fb6a4a'],
+                    [8.0, '#de2d26'],
+                    [10.0, '#a50f15']
+                  ]
+          },
+          "circle-radius": {
+              'base': 1.75,
+              'stops': [[12, 3], [22, 180]]
+          },
+          'circle-opacity' : 0.8
+        }
+      });
+
+>>>>>>> 581b39ed71f2f0552c1b1e87830b54fccc87e57a
 
     //todo: make call to predict
     new mapboxgl.Popup()
       .setLngLat(data.lngLat)
       .setHTML('<h2>Demand: 0</h2>')
       .addTo(predictionMap);
+<<<<<<< HEAD
   });
 });
+=======
+
+//     var features = predictionMap.queryRenderedFeatures(e.point, { layers: ['prediction'] });
+//     if (!features.length) {
+//            return;
+//        }
+//
+//     var feature = features[0];
+//     var popup = new mapboxgl.Popup()
+//             .setLngLat(feature.geometry.coordinates)
+//             .setHTML('<h2>Demand: '+ feature.properties['demand']+'</h2>')
+//             .addTo(map);
+  });
+
+
+//     predictionMap.on('mousemove', function(e) {
+//         var features = predictionMap.queryRenderedFeatures(e.point, { layers: ['prediction'] });
+//         predictionMap.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+//     });
+});
+>>>>>>> 581b39ed71f2f0552c1b1e87830b54fccc87e57a

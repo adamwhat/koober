@@ -8,6 +8,7 @@
     }
   },
   "algorithms": [
+<<<<<<< HEAD
     {
       "name": "alg",
       "params": {
@@ -17,6 +18,34 @@
         "stepSize": 0.9
       }
     }
+=======
+      {
+        "name": "algGBTree",
+        "params": {
+        "iterations": 100,
+        "maxDepth": 10
+        }
+      }
+      ,
+      {
+        "name": "algRegression",
+        "params": {
+        "iterations": 500,
+        "miniBatchFraction" : 0.5,
+        "regParam" : 0.0,
+        "stepSize": 0.01
+        }
+      },
+      {
+        "name": "ridgeRegression",
+        "params": {
+          "iterations": 1000,
+          "miniBatchFraction" : 1.0,
+          "regParam" : 0.5,
+          "stepSize": 0.01
+        }
+      }
+>>>>>>> 581b39ed71f2f0552c1b1e87830b54fccc87e57a
   ]
 }
 
