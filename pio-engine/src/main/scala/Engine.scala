@@ -31,10 +31,16 @@ object ForecastingEngine extends EngineFactory {
     new Engine(
       classOf[DataSource],
       classOf[Preparator],
+<<<<<<< HEAD
       Map("randomForest" -> classOf[RandomForestAlgorithm],
           "algRegression" -> classOf[Algorithm],
           "algGBTree"     -> classOf[AlgorithmGBTree],
           "multinomialLogistic" -> classOf[MultinomialLogisticRegressionAlgorithm]),
+=======
+      Map("algRegression" -> classOf[Algorithm],
+          "algGBTree"     -> classOf[AlgorithmGBTree],
+          "ridgeRegression" -> classOf[RidgeRegressionAlgorithm]),
+>>>>>>> 581b39ed71f2f0552c1b1e87830b54fccc87e57a
       classOf[Serving])
   }
 }

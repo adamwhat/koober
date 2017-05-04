@@ -72,8 +72,13 @@ object NewYorkDataSource {
       val parseTry = Try {
         val parts = line.split(",")
 
+<<<<<<< HEAD
         val lat = parts(5).toDouble
         val lng = parts(6).toDouble
+=======
+        val lng = parts(5).toDouble
+        val lat = parts(6).toDouble
+>>>>>>> 581b39ed71f2f0552c1b1e87830b54fccc87e57a
         val datetime = dateTimeFormatter.parseDateTime(parts(1))
         val temperature = parts(19).toDouble
         val clear = parts(20).toInt

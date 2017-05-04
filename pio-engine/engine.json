@@ -26,6 +26,7 @@
         }
       },
       {
+<<<<<<< HEAD
         "name": "multinomialLogistic",
         "params": {
         "iterations": 4096,
@@ -40,6 +41,14 @@
           "numTrees": "100",
           "maxDepth": "30",
           "numBins": "256"
+=======
+        "name": "ridgeRegression",
+        "params": {
+          "iterations": 1000,
+          "miniBatchFraction" : 1.0,
+          "regParam" : 0.5,
+          "stepSize": 0.01
+>>>>>>> 581b39ed71f2f0552c1b1e87830b54fccc87e57a
         }
       }
   ]
