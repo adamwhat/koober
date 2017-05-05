@@ -41,11 +41,7 @@ object NewYorkDataSource {
     // todo: don't save these locally if there isn't the space for it
     val files = filenames.map { filename =>
 
-<<<<<<< HEAD
       val url = new URL(s"https://s3.amazonaws.com/nyc-tlc/trip+data/$filename")
-=======
-      val url = new URL(s"https://s3.amazonaws.com/predictionio-temp-file/ny_yellowcab_with_weather_data.csv")
->>>>>>> 581b39ed71f2f0552c1b1e87830b54fccc87e57a
 
       val tmpFile = new File("/tmp", filename)
 
@@ -76,7 +72,6 @@ object NewYorkDataSource {
       val parseTry = Try {
         val parts = line.split(",")
 
-<<<<<<< HEAD
         val lat = parts(5).toDouble
         val lng = parts(6).toDouble
         val datetime = dateTimeFormatter.parseDateTime(parts(1))
@@ -86,58 +81,15 @@ object NewYorkDataSource {
 
       val onlyGoodLocations = parseTry.filter {
         case (lat, lng, datetime) =>
-=======
-        val lng = parts(5).toDouble
-        val lat = parts(6).toDouble
-        val datetime = dateTimeFormatter.parseDateTime(parts(1))
-        val temperature = parts(19).toDouble
-        val clear = parts(20).toInt
-        val fog = parts(21).toInt
-        val rain = parts(22).toInt
-        val snow = parts(23).toInt
-        val hail = parts(24).toInt
-        val thunder = parts(25).toInt
-        val tornado = parts(26).toInt
-        val heat = parts(21).toDouble
-        val windchill = parts(22).toDouble
-        val precipitation = parts(23).toDouble
-
-        (lat, lng, datetime, temperature, clear, fog, rain, snow, hail, thunder, tornado, heat, windchill, precipitation)
-      }
-
-      val onlyGoodLocations = parseTry.filter {
-        case (lat, lng, datetime, temperature, clear, fog, rain, snow, hail, thunder, tornado, heat, windchill, precipitation) =>
->>>>>>> 581b39ed71f2f0552c1b1e87830b54fccc87e57a
           lat != 0 && lng != 0
       }
 
       val jsonTry = onlyGoodLocations.map {
-<<<<<<< HEAD
         case (lat, lng, datetime) =>
           Json.obj(
             "lngLat" -> Json.obj(
               "lat" -> lat,
               "lng" -> lng
-=======
-        case (lat, lng, datetime, temperature, clear, fog, rain, snow, hail, thunder, tornado, heat, windchill, precipitation) =>
-          Json.obj(
-            "properties" -> Json.obj(
-              // Location Properties
-              "lat" -> lat,
-              "lng" -> lng,
-              // Weather Properties
-              "temperature" -> temperature,
-              "clear" -> clear,
-              "fog" -> fog,
-              "rain" -> rain,
-              "snow" -> snow,
-              "hail" -> hail,
-              "thunder" -> thunder,
-              "tornado" -> tornado,
-              "heat" -> heat,
-              "windchill" -> windchill,
-              "precipitation" -> precipitation
->>>>>>> 581b39ed71f2f0552c1b1e87830b54fccc87e57a
             ),
             "status" -> "pickup",
             "datetime" -> datetime

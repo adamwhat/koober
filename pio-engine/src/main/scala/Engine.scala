@@ -6,23 +6,9 @@ import org.joda.time.DateTime
 class Query(
              val eventTime: String,
              val lng: Double,
-<<<<<<< HEAD
              val lat: Double
 
            ) extends Serializable
-=======
-             val lat: Double,
-             val temperature: Double,
-             val clear: Int,
-             val fog: Int,
-             val rain: Int,
-             val snow: Int,
-             val hail: Int,
-             val thunder: Int,
-             val tornado: Int
-
-) extends Serializable
->>>>>>> 581b39ed71f2f0552c1b1e87830b54fccc87e57a
 
 class PredictedResult(
                        val demand: Double
@@ -37,13 +23,7 @@ object ForecastingEngine extends EngineFactory {
     new Engine(
       classOf[DataSource],
       classOf[Preparator],
-<<<<<<< HEAD
       Map("alg" -> classOf[Algorithm]),
-=======
-      Map("algRegression" -> classOf[Algorithm],
-          "algGBTree"     -> classOf[AlgorithmGBTree],
-          "ridgeRegression" -> classOf[RidgeRegressionAlgorithm]),
->>>>>>> 581b39ed71f2f0552c1b1e87830b54fccc87e57a
       classOf[Serving])
   }
 }

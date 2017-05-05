@@ -10,17 +10,10 @@ import org.apache.spark.mllib.regression.{LinearRegressionModel, LinearRegressio
 import org.joda.time.DateTime
 
 case class AlgorithmParams(
-<<<<<<< HEAD
   iterations:        Int    = 20,
   regParam:          Double = 0.1,
   miniBatchFraction: Double = 1.0,
   stepSize:          Double = 0.001
-=======
-  iterations:        Int    = 500,
-  regParam:          Double = 0.0,
-  miniBatchFraction: Double = 0.5,
-  stepSize:          Double = 0.01
->>>>>>> 581b39ed71f2f0552c1b1e87830b54fccc87e57a
 ) extends Params
 
 class Algorithm(val ap: AlgorithmParams)
@@ -34,7 +27,6 @@ class Algorithm(val ap: AlgorithmParams)
     lin.setIntercept(true)
     lin.setValidateData(true)
     lin.optimizer
-<<<<<<< HEAD
       .setNumIterations(1000)
       .setMiniBatchFraction(1.0)
       .setStepSize(0.001)
@@ -47,14 +39,6 @@ class Algorithm(val ap: AlgorithmParams)
     val linearRegressionModel = lin.run(preparedData.data)
     println(linearRegressionModel.intercept)
     println(linearRegressionModel.weights)
-=======
-      .setNumIterations(ap.iterations)
-      .setMiniBatchFraction(ap.miniBatchFraction)
-      .setStepSize(ap.stepSize)
-      .setRegParam(ap.regParam)
-
-    val linearRegressionModel = lin.run(preparedData.data)
->>>>>>> 581b39ed71f2f0552c1b1e87830b54fccc87e57a
     new Model(linearRegressionModel, Preparator.locationClusterModel.get, Preparator.standardScalerModel.get)
   }
 
@@ -68,16 +52,9 @@ class Model(mod: LinearRegressionModel, locationClusterModel: KMeansModel, stand
   @transient lazy val logger = Logger[this.type]
 
   def predict(query: Query): Double = {
-<<<<<<< HEAD
     val normalizedTimeFeatureVector = standardScalerModel.transform(Preparator.toFeaturesVector(DateTime.parse(query.eventTime), query.lat, query.lng))
     val locationClusterLabel = locationClusterModel.predict(Vectors.dense(query.lat, query.lng))
     val features = Preparator.toFeaturesVector(normalizedTimeFeatureVector, locationClusterLabel)
-=======
-    val normalizedFeatureVector = standardScalerModel.transform(Preparator.toFeaturesVector(DateTime.parse(query.eventTime),
-      query.temperature, query.clear, query.fog, query.rain, query.snow, query.hail, query.thunder, query.tornado))
-    val locationClusterLabel = locationClusterModel.predict(Vectors.dense(query.lat, query.lng))
-    val features = Preparator.combineFeatureVectors(normalizedFeatureVector, locationClusterLabel)
->>>>>>> 581b39ed71f2f0552c1b1e87830b54fccc87e57a
     mod.predict((features))
   }
 }

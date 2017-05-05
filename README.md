@@ -37,17 +37,16 @@ Start the Spark Streaming process:
 Setup PredictionIO Pipeline:
 
 1. Setup PIO
-2. Set the PIO Access Key:
+1. Set the PIO Access Key:
 
         export PIO_ACCESS_KEY=<YOUR PIO ACCESS KEY>
 
-3. Start the PIO Pipeline:
+1. Start the PIO Pipeline:
 
         ./sbt pioClient/run
 
 Copy demo data into Kafka or PIO:
 
-<<<<<<< HEAD
     For fake data, run:
     
         ./sbt "demoData/run <kafka|pio> fake <number of records> <number of months> <number of clusters>"
@@ -55,15 +54,6 @@ Copy demo data into Kafka or PIO:
     For New York data, run:
     
         ./sbt "demoData/run <kafka|pio> ny <number of months> <sample rate>"
-=======
-For fake data, run:
-
-    ./sbt "demoData/run <kafka|pio> fake <number of records> <number of months> <number of clusters>"
-    
-For New York data, run:
-
-    ./sbt "demoData/run <kafka|pio> ny <number of months> <sample rate>"
->>>>>>> 581b39ed71f2f0552c1b1e87830b54fccc87e57a
 
 Start the Demand Dashboard
 

@@ -73,8 +73,7 @@ class HomeController @Inject() (configuration: Configuration, predictionIO: Pred
     Json.obj(
       "type" -> "Feature",
       "properties" -> Json.obj(
-        "Primary ID" -> value,
-        "demand" -> Random.nextInt(10)
+        "Primary ID" -> value
       ),
       "geometry" -> Json.obj(
         "type" -> "Point",
