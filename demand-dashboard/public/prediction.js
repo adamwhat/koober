@@ -98,11 +98,10 @@ $(function() {
       });
 
   });
-    predictionMap.on('mousemove', function (data) {
+    predictionMap.on('data', function (data) {
        try {
            var demands = predictionMap.querySourceFeatures('demand', data.point);
            if (demands[0]){
-
               pop.setHTML('<h2>Demand:' + demands[0]["properties"]["demand"] + '</h2>')
                    .addTo(predictionMap);
            }
@@ -111,7 +110,6 @@ $(function() {
           // ignored
           console.log(e)
         }
-
     });
 
 
