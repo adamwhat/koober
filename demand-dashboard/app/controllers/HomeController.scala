@@ -73,7 +73,7 @@ class HomeController @Inject() (configuration: Configuration, predictionIO: Pred
         "tornado" -> tornado
       )
       var prediction = predictionIO.predict(query)
-      prediction.map { json => toGeoJson2(json, lngLatArray(0)(i), lngLatArray(1)(i), i) }
+      prediction.map { json => print(json);toGeoJson2(json, lngLatArray(0)(i), lngLatArray(1)(i), i) }
 
     })
 
