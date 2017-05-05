@@ -47,7 +47,7 @@ class MultinomialLogisticRegressionAlgorithm(val ap: LogisticParams)
 
   def predict(model: LogisticModel, query: Query): PredictedResult = {
     val label : Double = model.predict(query)
-    new PredictedResult(label)
+    new PredictedResult(label, Map("multinomialRegression" -> label))
   }
 }
 
