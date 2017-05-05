@@ -54,6 +54,12 @@ object EngineParamsList extends EngineParamsGenerator {
       algorithmParamsList = Seq(
         ("multinomialLogistic", LogisticParams(iterations = 4096, numClasses = 200, convergenceTol = 0.01, regParam = 0.5)),
         ("multinomialLogistic", LogisticParams(iterations = 4096, numClasses = 200, convergenceTol = 0.01, regParam = 0.5))
+      )),
+    baseEP.copy(
+      algorithmParamsList = Seq(
+        ("randomForest", ForestParams(numTrees = 10, maxDepth = 10, numBins = 32)),
+        ("randomForest", ForestParams(numTrees = 30, maxDepth = 20, numBins = 32)),
+        ("randomForest", ForestParams(numTrees = 100, maxDepth = 30, numBins = 64))
       ))
   )
 }

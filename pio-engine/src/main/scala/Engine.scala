@@ -33,7 +33,8 @@ object ForecastingEngine extends EngineFactory {
       classOf[Preparator],
       Map("algRegression" -> classOf[Algorithm],
           "algGBTree"     -> classOf[AlgorithmGBTree],
-          "multinomialLogistic" -> classOf[MultinomialLogisticRegressionAlgorithm]),
+          "multinomialLogistic" -> classOf[MultinomialLogisticRegressionAlgorithm],
+        "randomForest" -> classOf[RandomForestAlgorithm]),
       classOf[Serving])
   }
 }
