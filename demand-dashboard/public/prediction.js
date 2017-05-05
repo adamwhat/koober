@@ -50,12 +50,15 @@ $(function() {
 
   predictionMap.addControl(new mapboxgl.NavigationControl({position: 'top-left'}));
 
-
+    var pop = new mapboxgl.Popup()
   predictionMap.on('click', function(data) {
+
     lat = data.lngLat.lat;
     lng = data.lngLat.lng;
     $("#latitude-input").val(lat);
     $("#longitude-input").val(lng);
+    pop.remove()
+    pop.setLngLat(data.lngLat)
 
     try {
       predictionMap.removeSource("demand");
@@ -64,6 +67,7 @@ $(function() {
     catch (e) {
       // ignored
     }
+
 
     predictionMap.addSource("demand", {
          type: "geojson",
@@ -92,7 +96,23 @@ $(function() {
             'circle-opacity' : 0.8
           }
       });
+
   });
+    predictionMap.on('data', function (data) {
+       try {
+           var demands = predictionMap.querySourceFeatures('demand', data.point);
+           if (demands[0]){
+              pop.setHTML('<h2>Demand:' + demands[0]["properties"]["demand"] + '</h2>')
+                   .addTo(predictionMap);
+           }
+        }
+        catch (e) {
+          // ignored
+          console.log(e)
+        }
+    });
+
+
 
   function makeCluster(lat, lng) {
     lats = [lat];
