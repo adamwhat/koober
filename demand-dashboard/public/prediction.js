@@ -112,8 +112,6 @@ $(function() {
         }
     });
 
-
-
   function makeCluster(lat, lng) {
     lats = [lat];
     lngs = [lng];
