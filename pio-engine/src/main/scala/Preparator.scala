@@ -13,13 +13,12 @@ import org.joda.time.DateTime
 
 import org.nd4j.linalg.factory.Nd4j
 import org.nd4j.linalg.dataset.DataSet
-import org.nd4j.linalg.api.ndarray.INDArray
 
 import java.io._
+import org.nd4s.Implicits._
 
 class PreparedData(
-  //val dataSet: DataSet,
-  val dataSet: INDArray, // inputs array
+  val dataSet: DataSet
 ) extends Serializable
 //     with SanityCheck {
 
@@ -34,7 +33,6 @@ class Preparator extends PPreparator[TrainingData, PreparedData] {
   @transient lazy val logger = Logger[this.type]
 
   def prepare(sc: SparkContext, trainingData: TrainingData): PreparedData = {
-
 
     // clustering coordinates and assign cluster labels.
     val standardScaler = new StandardScaler(true, true)//Used to calculate mean and std so that we can normalize features
@@ -75,15 +73,11 @@ class Preparator extends PPreparator[TrainingData, PreparedData] {
     val labels = dataArray.transpose.head
 
     val featuresINDArray = Nd4j.create(features)
-    println(featuresINDArray.size(0) + " " + featuresINDArray.size(1))
-
-    val labelsINDArray = labelsArray.asNDArray(labels.length,1)
-    println(labelsINDArray.size(0) + " " + labelsINDArray.size(1))
+    val labelsINDArray = labels.asNDArray(labels.length,1)
 
     var dataset = new DataSet(featuresINDArray, labelsINDArray)
-    var inputINDArray = Nd4j.create(featuresArray)
 
-    new PreparedData(inputINDArray)
+    new PreparedData(dataset)
   }
 }
 
