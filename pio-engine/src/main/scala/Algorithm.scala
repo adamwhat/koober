@@ -47,32 +47,30 @@ class Algorithm(val ap: AlgorithmParams)
   @transient lazy val logger = Logger[this.type]
 
   def train(sc: SparkContext, preparedData: PreparedData): Model = {
-    Nd4j.MAX_SLICES_TO_PRINT = 10;
-    Nd4j.MAX_ELEMENTS_PER_SLICE = 10;
 
+    val conf : MultiLayerConfiguration
+    = new NeuralNetConfiguration.Builder()
+      .seed(12345)
+      .iterations(50)
+      .learningRate(0.1)
+      .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
+      .weightInit(WeightInit.XAVIER)
+      .updater(Updater.NESTEROVS).momentum(0.9)
+      .list()
+      .layer(0, new DenseLayer.Builder().nIn(9).nOut(256)
+        .activation(Activation.RELU).build())
+      .layer(1, new DenseLayer.Builder().nIn(256).nOut(100)
+        .activation(Activation.RELU).build())
+      .layer(2, new OutputLayer.Builder(MSE)
+        .activation(Activation.IDENTITY)
+        .nIn(100).nOut(1).build())
+      .backprop(true).pretrain(false).build()
 
-    val conf : MultiLayerConfiguration 
-      = new NeuralNetConfiguration.Builder()
-        .seed(ap.seed)
-        .iterations(ap.iterations)
-        .learningRate(ap.learningRate)
-        .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-        .weightInit(WeightInit.XAVIER)
-        .updater(Updater.NESTEROVS).momentum(0.9)
-        .list()
-        .layer(0, new DenseLayer.Builder().nIn(9).nOut(20)
-          .activation(Activation.TANH).build())
-        .layer(1, new RnnOutputLayer.Builder(MSE)
-          .activation(Activation.IDENTITY)
-          .nIn(20).nOut(10000).build())
-        .backprop(true).pretrain(false).build()
-    conf.setPretrain(true)
     val model : MultiLayerNetwork = new MultiLayerNetwork(conf)
     model.init()
-    model.setListeners(new ScoreIterationListener(ap.listenerFreq))
+    model.setListeners(new ScoreIterationListener(1))
 
-    //println((preparedData.dataSet)
-    model.fit(preparedData.dataSet)//, preparedData.labels)
+    model.fit(preparedData.dataSet)
 
     new Model(model, Preparator.locationClusterModel.get, Preparator.standardScalerModel.get)
   }

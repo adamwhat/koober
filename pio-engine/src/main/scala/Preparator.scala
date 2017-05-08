@@ -20,7 +20,6 @@ import java.io._
 class PreparedData(
   //val dataSet: DataSet,
   val dataSet: INDArray, // inputs array
-  val labels: Array[Double]
 ) extends Serializable
 //     with SanityCheck {
 
@@ -75,40 +74,16 @@ class Preparator extends PPreparator[TrainingData, PreparedData] {
     val features = dataArray.transpose.tail.transpose
     val labels = dataArray.transpose.head
 
-    println("features size = " + features.size + " x " + dataArray.transpose.tail.size)
-    println("labels size = " + labels.size )
+    val featuresINDArray = Nd4j.create(features)
+    println(featuresINDArray.size(0) + " " + featuresINDArray.size(1))
 
-    val f1 = "features.csv"
-    val f2 = "labels.csv"
-    val f3 = "data.csv"
+    val labelsINDArray = labelsArray.asNDArray(labels.length,1)
+    println(labelsINDArray.size(0) + " " + labelsINDArray.size(1))
 
-    val writer1 = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f1)))
-    for (f <- features) {
-      writer1.write(f.mkString(",") + "\n")  // however you want to format it
-    }
-    writer1.close()
+    var dataset = new DataSet(featuresINDArray, labelsINDArray)
+    var inputINDArray = Nd4j.create(featuresArray)
 
-    val writer2 = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f2)))
-    for (l <- labels) {
-      println(l)
-      writer2.write(l + "\n")
-    }
-    writer2.close()
-
-//    val writer3 = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f3)))
-//    for (d <- data) {
-//      println(d.mkString(","))
-//      writer3.write(d.mkString(",") + "\n")  // however you want to format it
-//    }
-//    writer3.close()
-
-    var dataset = new DataSet(Nd4j.create(features), Nd4j.create(labels))
-    var inputINDArray = Nd4j.create(features)
-
-    //println(inputINDArray)
-    //new PreparedData(dataset, labels)
-    new PreparedData(inputINDArray, labels)
-    //new PreparedData(features, labels)
+    new PreparedData(inputINDArray)
   }
 }
 
