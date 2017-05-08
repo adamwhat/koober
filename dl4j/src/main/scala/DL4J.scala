@@ -20,15 +20,27 @@ import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction.MSE;
 import scala.io._
+import org.nd4s.Implicits._
 
 object DL4J extends App {
 
   // Read in training data
   val f = "features.csv"
   val l = "labels.csv"
-  val featuresArray = Source.fromFile(f).getLines().map(_.split(",").map(_.trim.toDouble)).toArray
+  val featuresArray = Source.fromFile(f).getLines().map(_.split(",").map(_.trim.toDouble).toArray).toArray
   val labelsArray = Source.fromFile(l).getLines().map(_.trim.toDouble).toArray
 
+  println(featuresArray.size)
+  println(labelsArray.size)
+  println(labelsArray(0))
+
+//  for (f <- featuresArray)
+//    for (x <- f)
+//      print(x +" ")
+//    println("")
+//  println("--------------------------------")
+//  for (l <- labelsArray)
+//    println(l)
   val conf : MultiLayerConfiguration
   = new NeuralNetConfiguration.Builder()
     .seed(12345)
@@ -39,21 +51,24 @@ object DL4J extends App {
     .updater(Updater.NESTEROVS).momentum(0.9)
     .list()
     .layer(0, new DenseLayer.Builder().nIn(9).nOut(20)
-      .activation(Activation.TANH).build())
-    .layer(1, new RnnOutputLayer.Builder(MSE)
+      .activation(Activation.RELU).build())
+    .layer(1, new OutputLayer.Builder(MSE)
       .activation(Activation.IDENTITY)
-      .nIn(20).nOut(10000).build())
+      .nIn(20).nOut(1).build())
     .backprop(true).pretrain(false).build()
-  conf.setPretrain(true)
+
   val model : MultiLayerNetwork = new MultiLayerNetwork(conf)
   model.init()
-  model.setListeners(new ScoreIterationListener(2))
+  model.setListeners(new ScoreIterationListener(1))
 
-  var dataset = new DataSet(Nd4j.create(featuresArray), Nd4j.create(labelsArray))
+  val labelsINDArray = labelsArray.asNDArray(labelsArray.length,1)
+  println(labelsINDArray.size(0) + " " + labelsINDArray.size(1))
+
+  val featuresINDArray = Nd4j.create(featuresArray)
+  println(featuresINDArray.size(0) + " " + featuresINDArray.size(1))
+
+  var dataset = new DataSet(featuresINDArray, labelsINDArray)
   var inputINDArray = Nd4j.create(featuresArray)
 
-  model.fit(inputINDArray, Nd4j.create(labelsArray))
-
-//  MultiLayerNetworkExternalErrors.main(args)
-
+  model.fit(dataset)
 }
