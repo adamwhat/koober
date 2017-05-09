@@ -1,0 +1,30 @@
+2017-03-09 21:49:42,424 WARN  org.apache.predictionio.tools.console.Template$ [main] - template.json does not exist. Template metadata will not be available. (This is safe to ignore if you are not working on a template.)
+2017-03-09 21:49:42,429 INFO  org.apache.predictionio.tools.console.Console$ [main] - Using command '/Users/erinchen/Downloads/apache-predictionio-0.10.0-incubating/PredictionIO-0.10.0-incubating/sbt/sbt' at the current working directory to build.
+2017-03-09 21:49:42,429 INFO  org.apache.predictionio.tools.console.Console$ [main] - If the path above is incorrect, this process will fail.
+2017-03-09 21:49:42,430 INFO  org.apache.predictionio.tools.console.Console$ [main] - Uber JAR disabled, but current working directory does not look like an engine project directory. Please delete lib/pio-assembly-0.10.0-incubating.jar manually.
+2017-03-09 21:49:42,431 INFO  org.apache.predictionio.tools.console.Console$ [main] - Going to run: /Users/erinchen/Downloads/apache-predictionio-0.10.0-incubating/PredictionIO-0.10.0-incubating/sbt/sbt  package assemblyPackageDependency
+2017-03-09 21:50:27,665 ERROR org.apache.predictionio.tools.console.Console$ [Thread-1] - [0m[[31merror[0m] [0mNot a valid command: assemblyPackageDependency[0m
+2017-03-09 21:50:27,666 ERROR org.apache.predictionio.tools.console.Console$ [Thread-1] - [0m[[31merror[0m] [0mNot a valid key: assemblyPackageDependency (similar: debianPackageDependencies, debian-package-dependencies, sbtDependency)[0m
+2017-03-09 21:50:27,667 ERROR org.apache.predictionio.tools.console.Console$ [Thread-1] - [0m[[31merror[0m] [0massemblyPackageDependency[0m
+2017-03-09 21:50:27,667 ERROR org.apache.predictionio.tools.console.Console$ [Thread-1] - [0m[[31merror[0m] [0m                         ^[0m
+2017-03-09 21:50:27,788 ERROR org.apache.predictionio.tools.console.Console$ [main] - Return code of previous step is 1. Aborting.
+2017-04-25 18:18:12,347 INFO  org.apache.predictionio.tools.console.Console$ [main] - Using existing engine manifest JSON at /Users/erinchen/Developer/5152/koober/manifest.json
+2017-04-25 18:18:12,352 WARN  org.apache.predictionio.tools.console.Template$ [main] - template.json does not exist. Template metadata will not be available. (This is safe to ignore if you are not working on a template.)
+2017-04-25 18:18:13,451 ERROR org.apache.predictionio.tools.console.Console$ [main] - Engine flEAeVrknsF5VZrYutt1UB4xBSvTYix4 6e3de09cd06e2b0aee371fbec48d1ea902e52e76 cannot be found in the system.
+2017-04-25 18:18:13,452 ERROR org.apache.predictionio.tools.console.Console$ [main] - Possible reasons:
+2017-04-25 18:18:13,452 ERROR org.apache.predictionio.tools.console.Console$ [main] - - the engine is not yet built by the 'build' command;
+2017-04-25 18:18:13,453 ERROR org.apache.predictionio.tools.console.Console$ [main] - - the meta data store is offline.
+2017-04-25 18:18:24,397 INFO  org.apache.predictionio.tools.console.Console$ [main] - Using existing engine manifest JSON at /Users/erinchen/Developer/5152/koober/manifest.json
+2017-04-25 18:18:24,407 WARN  org.apache.predictionio.tools.console.Template$ [main] - template.json does not exist. Template metadata will not be available. (This is safe to ignore if you are not working on a template.)
+2017-04-25 18:18:26,012 ERROR org.apache.predictionio.tools.console.Console$ [main] - Engine flEAeVrknsF5VZrYutt1UB4xBSvTYix4 6e3de09cd06e2b0aee371fbec48d1ea902e52e76 cannot be found in the system.
+2017-04-25 18:18:26,014 ERROR org.apache.predictionio.tools.console.Console$ [main] - Possible reasons:
+2017-04-25 18:18:26,017 ERROR org.apache.predictionio.tools.console.Console$ [main] - - the engine is not yet built by the 'build' command;
+2017-04-25 18:18:26,020 ERROR org.apache.predictionio.tools.console.Console$ [main] - - the meta data store is offline.
+2017-05-08 19:45:25,475 INFO  org.apache.predictionio.tools.console.App$ [main] -                 Name |   ID |                                                       Access Key | Allowed Event(s)
+2017-05-08 19:45:25,484 INFO  org.apache.predictionio.tools.console.App$ [main] -      LoadForcastDemo |    2 | j1K6nqyfVJvXbPi1bHHXRb5jRX7k3MIJWhx4VzGqCVVvNpMXDhk5Cb-32oeVe7Ln | (all)
+2017-05-08 19:45:25,486 INFO  org.apache.predictionio.tools.console.App$ [main] -        QuickStartApp |    1 | dMCexLF2RlBj8RH6Tg7rAgT4erqqqs6Vcy2P_vkbQ6gsLfBxACl6rIVdpJp_sb-I | (all)
+2017-05-08 19:45:25,487 INFO  org.apache.predictionio.tools.console.App$ [main] -       SparklingWater |    5 | H4I0emfSPd8l2eMzKTF04bx9-E0WK3kz3ZQMlFZVYWuwcenGw95Hpa_ipf3uMdXE | (all)
+2017-05-08 19:45:25,489 INFO  org.apache.predictionio.tools.console.App$ [main] -               koober |    4 | aGVTCHU39p8myhhlZyRywcA-fFaVjq1tHbQbKhNcGeUzHX5EG16vatc47tGlR1cV | (all)
+2017-05-08 19:45:25,491 INFO  org.apache.predictionio.tools.console.App$ [main] -           multilayer |    7 | sUejA697K14rVRlr3I-svdbyeDgh6UFUc4fHBELUwKv5JT7iH_1fyQJwWlXxCDUI | (all)
+2017-05-08 19:45:25,492 INFO  org.apache.predictionio.tools.console.App$ [main] -              sparkly |    6 | oeLJVDcp7E9J7suoXQXTjAptOEkfrodc34WR_rVWoLMYe7J6nSoUjAIalypnSoLO | (all)
+2017-05-08 19:45:25,493 INFO  org.apache.predictionio.tools.console.App$ [main] - Finished listing 6 app(s).
