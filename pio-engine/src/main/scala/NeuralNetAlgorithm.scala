@@ -80,7 +80,12 @@ class NeuralNetModel(mod: MultiLayerNetwork, locationClusterModel: KMeansModel, 
     val features = Preparator.combineFeatureVectors(normalizedFeatureVector, locationClusterLabel)
 
     println (features.toArray)
-    mod.predict(Nd4j.create(features.toArray))(0).toDouble
+    val out = mod.output(Nd4j.create(features.toArray))
+    println(out)
+    println(out.max(0))
+    println(out.max(1))
+
+    10.0
   }
 }
 
