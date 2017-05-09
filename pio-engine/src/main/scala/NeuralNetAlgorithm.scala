@@ -6,7 +6,6 @@ import org.apache.spark.SparkContext
 import org.apache.spark.mllib.clustering.KMeansModel
 import org.apache.spark.mllib.feature.StandardScalerModel
 import org.apache.spark.mllib.linalg.Vectors
-import org.apache.spark.mllib.regression.{LinearRegressionModel, LinearRegressionWithSGD}
 import org.joda.time.DateTime
 
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
@@ -23,33 +22,31 @@ import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction.MSE;
 
 
-case class AlgorithmParams(
+case class NeuralNetAlgorithmParams(
   seed:               Int     = 12345,
-  iterations:         Int     = 20,
+  iterations:         Int     = 500,
   learningRate:       Double  = 0.1,
-  layers:             Int     = 2,
-  numInputs:          Int     = 10,
-  numOutputs:         Int     = 1,
+  numInputs:          Int     = 212,
   listenerFreq:       Int     = 2
 ) extends Params
 
-class Algorithm(val ap: AlgorithmParams)
-  extends P2LAlgorithm[PreparedData, Model, Query, PredictedResult] with MyQuerySerializer {
+class NeuralNetAlgorithm(val ap: NeuralNetAlgorithmParams)
+  extends P2LAlgorithm[PreparedData, NeuralNetModel, Query, PredictedResult] with NeuralNetQuerySerializer {
 
   @transient lazy val logger = Logger[this.type]
 
-  def train(sc: SparkContext, preparedData: PreparedData): Model = {
+  def train(sc: SparkContext, preparedData: PreparedData): NeuralNetModel = {
 
     val conf : MultiLayerConfiguration
     = new NeuralNetConfiguration.Builder()
-      .seed(12345)
-      .iterations(50)
-      .learningRate(0.1)
+      .seed(ap.seed)
+      .iterations(ap.iterations)
+      .learningRate(ap.learningRate)
       .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
       .weightInit(WeightInit.XAVIER)
       .updater(Updater.NESTEROVS).momentum(0.9)
       .list()
-      .layer(0, new DenseLayer.Builder().nIn(9).nOut(256)
+      .layer(0, new DenseLayer.Builder().nIn(212).nOut(256)
         .activation(Activation.RELU).build())
       .layer(1, new DenseLayer.Builder().nIn(256).nOut(100)
         .activation(Activation.RELU).build())
@@ -60,32 +57,34 @@ class Algorithm(val ap: AlgorithmParams)
 
     val model : MultiLayerNetwork = new MultiLayerNetwork(conf)
     model.init()
-    model.setListeners(new ScoreIterationListener(1))
+    model.setListeners(new ScoreIterationListener(ap.listenerFreq))
 
     model.fit(preparedData.dataSet)
 
-    new Model(model, Preparator.locationClusterModel.get, Preparator.standardScalerModel.get)
+    new NeuralNetModel(model, Preparator.locationClusterModel.get, Preparator.standardScalerModel.get)
   }
 
-  def predict(model: Model, query: Query): PredictedResult = {
+  def predict(model: NeuralNetModel, query: Query): PredictedResult = {
     val label : Double = model.predict(query)
-    new PredictedResult(label)
+    new PredictedResult(label, Map("alg" -> label))
   }
 }
 
-class Model(mod: MultiLayerNetwork, locationClusterModel: KMeansModel, standardScalerModel: StandardScalerModel) extends Serializable { 
+class NeuralNetModel(mod: MultiLayerNetwork, locationClusterModel: KMeansModel, standardScalerModel: StandardScalerModel) extends Serializable {
   @transient lazy val logger = Logger[this.type]
 
   def predict(query: Query) : Double = {
-    val normalizedTimeFeatureVector = standardScalerModel.transform(Preparator.toFeaturesVector(DateTime.parse(query.eventTime), query.lat, query.lng))
+    val normalizedFeatureVector = standardScalerModel.transform(Preparator.toFeaturesVector(DateTime.parse(query.eventTime),
+      query.temperature, query.clear, query.fog, query.rain, query.snow, query.hail, query.thunder, query.tornado))
     val locationClusterLabel = locationClusterModel.predict(Vectors.dense(query.lat, query.lng))
-    val features = Preparator.toFeaturesVector(normalizedTimeFeatureVector, locationClusterLabel)
+    val features = Preparator.combineFeatureVectors(normalizedFeatureVector, locationClusterLabel)
+
     println (features.toArray)
     mod.predict(Nd4j.create(features.toArray))(0).toDouble
   }
 }
 
-trait MyQuerySerializer extends CustomQuerySerializer {
+trait NeuralNetQuerySerializer extends CustomQuerySerializer {
   @transient override lazy val querySerializer = org.json4s.DefaultFormats ++ org.json4s.ext.JodaTimeSerializers.all
 }
 

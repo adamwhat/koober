@@ -1,6 +1,11 @@
 package edu.cs5152.predictionio.demandforecasting
 
 
+import grizzled.slf4j.Logger
+import org.apache.spark.SparkContext
+import org.apache.spark.mllib.clustering.KMeansModel
+import org.apache.spark.mllib.linalg.{Vector, Vectors}
+import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.rdd.RDD
 import org.joda.time.DateTime
 
@@ -9,14 +14,25 @@ import org.joda.time.DateTime
   */
 object KooberUtil {
 
+  val TIME_INTERVAL_LENGTH = "halfHour"
+
+
+  def createNormalizedMap(values:RDD[UserEvent]): RDD[(DateTime,Long)] =
+  {
+    values.map(ev =>
+      (ev.eventTime, normalize(ev.eventTime, "halfHour"))) //CHANGE THIS to change the granularity of how to group demands
+  }
   /**
     * create a map from eventTime to Normalized eventTime
-    * @param values
-    * @return
     */
-  def createNormalizedMap(values:RDD[UserEvent]): RDD[(DateTime, Long)] ={
-    values map { ev =>
-      (ev.eventTime, normalize(ev.eventTime, "hour"))}//CHANGE THIS to change the granularity of how to group demands
+  def createTimeToNormalizedTimeMap(timestamps:RDD[DateTime]): RDD[(DateTime,Long)] ={
+    timestamps.map(time =>
+      (time, normalize(time, TIME_INTERVAL_LENGTH)))//CHANGE THIS to change the granularity of how to group demands
+  }
+
+  def createNormalizedTimeAndLocationLabelTuple(timeAndLocationLabels:RDD[(DateTime, Int)]):RDD[(Long, Int)] = {
+    timeAndLocationLabels.map(timeAndLocationLabel =>
+      (normalize(timeAndLocationLabel._1, TIME_INTERVAL_LENGTH), timeAndLocationLabel._2))
   }
 
   /**
@@ -25,7 +41,12 @@ object KooberUtil {
     * @return
     */
   def createCountMap(values: RDD[Long])={
-    values map ((normalizedTime) => (normalizedTime, 1)) countByKey()
+    val timeMap: RDD[(Long,Long)] = values.map(normalizedTime => (normalizedTime, 1))
+    timeMap.countByKey()//foldByKey(0)((x, y) => x+y)
+  }
+
+  def normalize(eventTime: DateTime): Long = {
+    normalize(eventTime, TIME_INTERVAL_LENGTH)
   }
 
   /**
@@ -45,6 +66,16 @@ object KooberUtil {
     }
   }
 
+  def denormalize(normalizedTime: Long): DateTime = {
+    TIME_INTERVAL_LENGTH match{
+      case "minute"         => new DateTime(normalizedTime*(1000*60))
+      case "fiveMinutes"    => new DateTime(normalizedTime*(1000*60*5))
+      case "halfHour"       => new DateTime(normalizedTime*(1000*60*30))
+      case "hour"           => new DateTime(normalizedTime*(1000*60*60))
+      case _                => throw new NotImplementedError("This normalization method is not implemented")
+    }
+  }
+
   def bool2int(b:Boolean) = if (b) 1 else 0
 
 
@@ -56,4 +87,3 @@ object KooberUtil {
     ret
   }
 }
-

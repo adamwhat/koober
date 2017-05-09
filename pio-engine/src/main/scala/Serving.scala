@@ -6,6 +6,17 @@ class Serving extends LServing[Query, PredictedResult] {
 
   override def serve(query: Query,
                      predictedResults: Seq[PredictedResult]): PredictedResult = {
-    predictedResults.head
+    val algorithms : Map[String, Double] = predictedResults.foldLeft(Map.empty[String, Double]) {
+      (acc: Map[String, Double], pred: PredictedResult) =>
+        (acc.keySet ++ pred.algorithms.keySet).map(i=>
+          (i, acc.getOrElse(i, 0.0) + pred.algorithms.getOrElse(i,0.0))).toMap
+    }
+
+    val demand = predictedResults.foldLeft(0.0) {
+      (acc : Double, pred: PredictedResult) =>
+        acc + pred.demand
+    }
+
+    new PredictedResult(demand / predictedResults.length, algorithms)
   }
 }
