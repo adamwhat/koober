@@ -66,4 +66,8 @@ object DL4J extends App {
   var inputINDArray = Nd4j.create(featuresArray)
 
   model.fit(dataset)
+
+//  val INDArray test = Nd4j.create(new double[] {}, )
+//  INDARRAY out = model.output(test, false)
+//  System.out.println(out)
 }
