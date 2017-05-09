@@ -67,8 +67,9 @@ object DL4J extends App {
 
   model.fit(dataset)
 
-  val testArray = Array(0.01,1.25,1.3,-0.2,0.0,0.0,0.0,0.0,1.0);
-  val test = Nd4j.create(testArray)
+  val test1 = Array(0.01,1.25,1.3,-0.2,0.0,0.0,0.0,0.0,1.0);
+  val test2 = Array(0.46491974207422154,-1.5712020062115843,-0.5072547967305878,-1.543453083885161,1.0,0.0,0.0,0.0,0.0)
+  val test = Nd4j.create(test2)
   val out = model.output(test, false)
   System.out.println(out)
 
