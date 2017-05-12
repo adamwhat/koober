@@ -13,6 +13,7 @@ $(function() {
   var temperature = 20
   var weather = 0
   var weatherArray = [1,0,0,0,0,0,0]
+  var algorithm = 0
 
   $("#date-select").on("change", function(){
     console.log(typeof($("#date-select").val()))
@@ -38,6 +39,10 @@ $(function() {
     weatherArray[weather] = 1
     console.log(weatherArray)
   });
+
+  $("#algorithm-select").on("change", function(){
+      algorithm = parseInt($("#algorithm-select").val())
+    });
 
 
   var predictionMap = new mapboxgl.Map({
@@ -82,11 +87,11 @@ $(function() {
                 property: 'demand',
                 type: 'exponential',
                 stops: [
-                      [20.0, '#fee5d9'],
-                      [40.0, '#fcae91'],
-                      [60.0, '#fb6a4a'],
-                      [80.0, '#de2d26'],
-                      [100.0, '#a50f15']
+                      [15.0, '#fee5d9'],
+                      [30.0, '#fcae91'],
+                      [45.0, '#fb6a4a'],
+                      [60.0, '#de2d26'],
+                      [75.0, '#a50f15']
                     ]
             },
             "circle-radius": {
@@ -108,26 +113,30 @@ $(function() {
         }
         catch (e) {
           // ignored
-          console.log(e)
+//          console.log(e)
         }
     });
 
     predictionMap.on('mousemove', function (data) {
-           try {
-               var demands = predictionMap.querySourceFeatures('demand', data.point);
-               if (demands[0]){
-                  pop.remove()
-                  var i = findNearestIndex(demands, data);
-                  pop.setHTML('<h2>Demand:' + demands[i]["properties"]["demand"] + '</h2>')
-                       .addTo(predictionMap);
-                  pop.setLngLat([demands[i]["geometry"]["coordinates"][0], demands[i]["geometry"]["coordinates"][1]])
-               }
-            }
-            catch (e) {
-              // ignored
-              console.log(e)
-            }
-        });
+       try {
+//            console.log(data.point)
+           var demands = predictionMap.querySourceFeatures('demand', data.point);
+           if (demands[0]){
+              pop.remove()
+              var i = findNearestIndex(demands, data);
+              if (i != -1){
+                pop.setHTML('<h2>Demand:' + demands[i]["properties"]["demand"] + '</h2>')
+                    .addTo(predictionMap);
+                pop.setLngLat([demands[i]["geometry"]["coordinates"][0], demands[i]["geometry"]["coordinates"][1]])
+              }
+
+           }
+        }
+        catch (e) {
+          // ignored
+//              console.log(e)
+        }
+    });
 
   function makeCluster(lat, lng) {
     lats = [lat];
@@ -163,19 +172,23 @@ $(function() {
        return "eventTime=" + eventTime.toISOString() + "&lat=" + lat +
              "&lng=" + lng + "&temperature=" + temperature + "&clear=" + weatherArray[0] + "&fog=" + weatherArray[1] +
              "&rain=" + weatherArray[2] + "&snow=" + weatherArray[3] + "&hail=" + weatherArray[4]
-              + "&thunder=" + weatherArray[5] + "&tornado=" + weatherArray[6]
+              + "&thunder=" + weatherArray[5] + "&tornado=" + weatherArray[6] + "&algorithm=" + algorithm
        }
     });
 
     function findNearestIndex(demands, data){
         var nIndex = 0;
-        var nDistance = 10000000000.0
+        var nDistance = Number.MAX_SAFE_INTEGER
         for (i = 0; i < demands.length; i++){
             var dist = Math.pow((data.lngLat.lng - demands[i]["geometry"]["coordinates"][0]), 2) + Math.pow((data.lngLat.lat - demands[i]["geometry"]["coordinates"][1]),2);
             if (dist < nDistance){
                 nDistance = dist;
                 nIndex = i;
             }
+        }
+        if (nDistance > 0.00002){
+            nIndex = -1
+            console.log("greater")
         }
         return nIndex;
 
