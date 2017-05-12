@@ -82,11 +82,11 @@ $(function() {
                 property: 'demand',
                 type: 'exponential',
                 stops: [
-                      [10.0, '#fee5d9'],
-                      [20.0, '#fcae91'],
-                      [30.0, '#fb6a4a'],
-                      [40.0, '#de2d26'],
-                      [50.0, '#a50f15']
+                      [20.0, '#fee5d9'],
+                      [40.0, '#fcae91'],
+                      [60.0, '#fb6a4a'],
+                      [80.0, '#de2d26'],
+                      [100.0, '#a50f15']
                     ]
             },
             "circle-radius": {
@@ -111,6 +111,23 @@ $(function() {
           console.log(e)
         }
     });
+
+    predictionMap.on('mousemove', function (data) {
+           try {
+               var demands = predictionMap.querySourceFeatures('demand', data.point);
+               if (demands[0]){
+                  pop.remove()
+                  var i = findNearestIndex(demands, data);
+                  pop.setHTML('<h2>Demand:' + demands[i]["properties"]["demand"] + '</h2>')
+                       .addTo(predictionMap);
+                  pop.setLngLat([demands[i]["geometry"]["coordinates"][0], demands[i]["geometry"]["coordinates"][1]])
+               }
+            }
+            catch (e) {
+              // ignored
+              console.log(e)
+            }
+        });
 
   function makeCluster(lat, lng) {
     lats = [lat];
@@ -149,3 +166,17 @@ $(function() {
               + "&thunder=" + weatherArray[5] + "&tornado=" + weatherArray[6]
        }
     });
+
+    function findNearestIndex(demands, data){
+        var nIndex = 0;
+        var nDistance = 10000000000.0
+        for (i = 0; i < demands.length; i++){
+            var dist = Math.pow((data.lngLat.lng - demands[i]["geometry"]["coordinates"][0]), 2) + Math.pow((data.lngLat.lat - demands[i]["geometry"]["coordinates"][1]),2);
+            if (dist < nDistance){
+                nDistance = dist;
+                nIndex = i;
+            }
+        }
+        return nIndex;
+
+    }
