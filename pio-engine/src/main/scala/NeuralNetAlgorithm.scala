@@ -74,11 +74,14 @@ class NeuralNetModel(mod: MultiLayerNetwork, locationClusterModel: KMeansModel, 
   @transient lazy val logger = Logger[this.type]
 
   def predict(query: Query) : Double = {
+    println("1")
     val normalizedFeatureVector = standardScalerModel.transform(Preparator.toFeaturesVector(DateTime.parse(query.eventTime),
       query.temperature, query.clear, query.fog, query.rain, query.snow, query.hail, query.thunder, query.tornado))
+    println("2")
     val locationClusterLabel = locationClusterModel.predict(Vectors.dense(query.lat, query.lng))
+    println("3")
     val features = Preparator.combineFeatureVectors(normalizedFeatureVector, locationClusterLabel)
-
+    println("4")
     println (features.toArray)
     val out = mod.output(Nd4j.create(features.toArray))
     println(out)
