@@ -1,1 +1,1 @@
-web: target/universal/stage/bin/koober -Dhttp.port=${PORT}
+web: ./sbt demandDashboard/run -Dhttp.port=${PORT}
