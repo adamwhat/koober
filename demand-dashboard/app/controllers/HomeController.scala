@@ -197,17 +197,16 @@ class HomeController @Inject() (configuration: Configuration, predictionIO: Pred
   }
 
   def deserializeCoordinatesData(coordinates:String): Array[Array[Double]] = {
-    // println(coordinates)
     var tokens = coordinates.substring(2, coordinates.length-2).split("\\],\\[")
-    var coordinatesData:Array[Array[String]] = tokens.map(_.split(',')).toArray
-    var result = coordinatesData.map( _.map { tmp =>
+    var coordinatesArray:Array[Array[String]] = tokens.map(_.split(',')).toArray
+    var coordinatesData = coordinatesArray.map( _.map { tmp =>
       try {
         tmp.toDouble
       } catch {
         case _: NumberFormatException => 1.0
       }
     })
-    result
+    coordinatesData
   }
 
 }

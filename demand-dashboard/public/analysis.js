@@ -46,6 +46,8 @@ $(function() {
 
   var algorithmMapNames = {"algGBTree":gradientBoostedTreesMap, "algRegression":linearRegressionMap, "ridgeRegression":ridgeRegressionMap, "randomForest":randomForestMap};
   var coordinates = [];
+  var updateAlgorithmMapSliderDelay = 200; //Milliseconds
+  var updateAlgorithmMapInitialDelay = 1000; //Milliseconds
 
   $('#datetimepicker').datepicker({
     format: 'mm/dd/yyyy',
@@ -59,7 +61,7 @@ $(function() {
     current_time = input;
     $('#time-slider-value').html(prettyNumbers(Math.floor(input / 2)) + ":" + prettyNumbers((input % 2) * 30) + "-" +
       (prettyNumbers(Math.floor((input + 1) / 2))) + ":" + prettyNumbers(((input + 1) % 2) * 30))
-    updateAllMaps(200)
+    updateAllMaps(updateAlgorithmMapSliderDelay)
   });
 
   function getTimeElements() {
@@ -136,7 +138,7 @@ $(function() {
         'circle-opacity': 1.0
       }
     });
-    updateAllMaps(1000)
+    updateAllMaps(updateAlgorithmMapInitialDelay)
   });
 
   function updateAllMaps(delay) {
