@@ -87,8 +87,8 @@ class HomeController @Inject() (configuration: Configuration, predictionIO: Pred
     val resultSeq = (0 to (coordinatesData.length - 1)).map(i => {
       var query = Json.obj(
         "eventTime" -> eventTime,
-        "lat" -> coordinatesData(i)(0),
-        "lng" -> coordinatesData(i)(1),
+        "lat" -> coordinatesData(i)(1),
+        "lng" -> coordinatesData(i)(0),
         "temperature" -> 20,
         "clear" -> 1,
         "fog" -> 0,
@@ -109,7 +109,7 @@ class HomeController @Inject() (configuration: Configuration, predictionIO: Pred
 
   private def toGeoJsonForAlg(algorithm: String, json: JsValue, lat: Double, lon: Double, id: Int) = {
     var demand = (json \ "algorithms" \ algorithm).as[Double]
-
+    
     Json.obj(
       "type" -> "Feature",
       "properties" -> Json.obj(
